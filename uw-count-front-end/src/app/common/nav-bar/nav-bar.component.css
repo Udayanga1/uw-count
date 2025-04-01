@@ -1,0 +1,7 @@
+.dropdown-toggle::after {
+  display: none;
+}
+
+.uw-bg-primary {
+  background-color: #24AECF;
+}
