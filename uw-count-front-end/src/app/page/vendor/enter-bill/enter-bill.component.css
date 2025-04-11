@@ -1,0 +1,37 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+.form-control {
+  display: inline-block;
+}
+
+.amount {
+  background-color: white;
+}
+
+input{
+  color: rgba(69, 71, 71, 0.87);
+}
+
+input[type=number] {
+  text-align: end;
+}
+
+#tax-enter-bill, #discount-enter-bill {
+  border-color: #CF24AE !important;
+}
+
+#save-n-new {
+  border-color: #CF24AE;
+  color: #CF24AE;
+}
+
+#save-n-close{
+  background-color: #CF24AE;
+  color: white;
+}

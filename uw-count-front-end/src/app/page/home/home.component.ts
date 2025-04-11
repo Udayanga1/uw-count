@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
-import { NavBarComponent } from "../../common/nav-bar/nav-bar.component";
+import { ModalEnterBillService } from '../../service/modal-enter-bill.service';
 
 @Component({
   selector: 'app-home',
-  imports: [NavBarComponent],
+  imports: [],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+
+  constructor(private enterBillModalService: ModalEnterBillService) {}
+
+  openEnterBillModal(): void {
+    this.enterBillModalService.isModalOpen.emit(true);    
+  }
 
 }

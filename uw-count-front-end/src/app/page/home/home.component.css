@@ -5,3 +5,7 @@
 .uw-text-secondary {
   color: #CF24AE;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

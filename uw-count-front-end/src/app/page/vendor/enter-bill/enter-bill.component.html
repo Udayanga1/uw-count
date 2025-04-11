@@ -1,0 +1,100 @@
+<!-- src\app\page\vendor\enter-bill\enter-bill.component.html -->
+
+@if (isModalOpen) {
+  <div class="position-static d-block p-4" style="max-width: 1000px;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-4 shadow p-3 bg-white">
+        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+          <h1 class="modal-title fs-5 uw-text-primary">Enter Bill</h1>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-0">
+          <div class="d-flex justify-content-between gap-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Supplier</span>
+              <input type="search" list="supplierlist" class="form-control" >
+              <datalist id="supplierlist">
+                <option value="Supplier 1">
+                <option value="Supplier 2">
+                <option value="Supplier 3">
+             </datalist>
+            </div>
+            <div class="input-group mb-3 w-50">
+              <span class="input-group-text">Date</span>
+              <input type="date" class="form-control" id="invoice-date-enter-bill" [value]="invoiceDate">
+            </div>
+          </div>
+          <div class="d-flex justify-content-between gap-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Invoice No</span>
+              <input type="text" class="form-control" >
+            </div>
+            <div class="input-group mb-3 w-50">
+              <span class="input-group-text">Due</span>
+              <input type="date" class="form-control" id="due-date-enter-bill" [value]="dueDate">
+            </div>
+          </div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="uw-text-primary">Account</th>
+              <th scope="col" class="uw-text-primary">Description</th>
+              <th scope="col" class="uw-text-primary">Unit Price</th>
+              <th scope="col" class="uw-text-primary">Quantity</th>
+              <th scope="col" class="uw-text-primary">Amount<small> (tax exclusive)</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="search" list="accountlist" class="form-control" (change)="addRow($event)"></td>
+              <td><input type="text" class="form-control"></td>
+              <td><input type="number" class="form-control unit-price" style="width: 90px;" (change)="calAmount($event)"></td>
+              <td><input type="number" class="form-control quantity" style="width: 90px;" (change)="calAmount($event)"></td>
+              <td class="">
+                <div class="d-flex justify-content-between">
+                  <div class="col-auto w-75">
+                    <input type="number" class="form-control amount" style="width: 120px;" disabled>
+                  </div>
+                  <div class="col-auto">
+                    <button type="button" class="btn-close mt-1" (click)="removeRow($event)"></button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <datalist id="accountlist">
+                <option value="Account 1">
+                <option value="Account 2">
+                <option value="Account 3">
+             </datalist>
+            
+          </tbody>
+        </table>
+        <div class="row ms-auto me-2 w-25">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-tex border-0 bg-white w-50">SubTotal</span>
+            <input type="text" class="form-control border-0 bg-white border-bottom text-end" id="sub-total-enter-bill" disabled [value]="subTotal">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-tex border-0 bg-white w-50">Discount</span>
+            <input type="text" class="form-control border-0 bg-white border-bottom text-end" placeholder="0.00" id="discount-enter-bill" [(ngModel)]="discount" (ngModelChange)="recalculateTotals()">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-tex border-0 bg-white w-50">Tax</span>
+            <input type="text" class="form-control border-0 bg-white border-bottom text-end" placeholder="0.00" id="tax-enter-bill" [(ngModel)]="tax" (ngModelChange)="recalculateTotals()">
+          </div>
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-tex border-0 bg-white w-50 h5">Total</span>
+            <input type="text" class="form-control border-0 bg-white border-bottom text-end h5" [value]="total" disabled id="total-enter-bill">
+          </div>
+        </div>
+
+        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+          <button type="button" class="btn btn-lg" id="save-n-new" (click)="saveAndNew()">Save & New</button>
+          <button type="button" class="btn btn-lg" id="save-n-close" (click)="saveAndClose()">Save & Close</button>
+          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
