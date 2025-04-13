@@ -3,8 +3,8 @@ import { EventEmitter, Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class ModalEnterBillService {
+export class ModalPayBillService {
 
-  isEnterBillsOpen = new EventEmitter<boolean>();
+  isPayBillsOpen = new EventEmitter<boolean>();
   
 }

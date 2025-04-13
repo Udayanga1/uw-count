@@ -1,7 +1,13 @@
 <div class="position-relative">
-  @if (isModalOpen) {
+  @if (isEnterBillsOpen) {
     <div class="position-absolute top-0 start-0">
       <app-enter-bill />
+    </div>
+  }
+
+  @if (isPayBillsOpen) {
+    <div class="position-absolute top-0 start-0">
+      <app-pay-bill />
     </div>
   }
 </div>

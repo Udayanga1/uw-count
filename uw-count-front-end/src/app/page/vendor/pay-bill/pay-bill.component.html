@@ -1,0 +1,107 @@
+@if (isPayBillsOpen) {
+  <div class="position-static d-block p-4" style="max-width: 1000px;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-4 shadow p-3 bg-white">
+        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+          <h1 class="modal-title fs-5 uw-text-primary">Pay Bills</h1>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-0">
+          <div class="d-flex justify-content-between gap-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Supplier</span>
+              <input type="search" list="supplierlist" class="form-control" >
+              <datalist id="supplierlist">
+                <option value="Supplier 1">
+                <option value="Supplier 2">
+                <option value="Supplier 3">
+             </datalist>
+            </div>
+            <div class="input-group mb-3 w-50">
+              <span class="input-group-text">Date</span>
+              <input type="date" class="form-control" id="invoice-date-enter-bill" [value]="payDate">
+            </div>
+          </div>
+          <div class="d-flex justify-content-between gap-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Payment Method</span>
+              <select class="form-select" id="inputGroupSelect01">
+                <option value="1">Cash</option>
+                <option value="2">Bank</option>
+                <option value="3">Credit Card</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text">Account</span>
+              <input type="search" list="pay-accountlist" class="form-control" >
+              <datalist id="pay-accountlist">
+                <option value="Account 1">
+                <option value="Account 2">
+                <option value="Account 3">
+             </datalist>
+            </div>
+            
+          </div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th scope="col" class="uw-text-primary">Invoice</th>
+              <th scope="col" class="uw-text-primary">Amount Due</th>
+              <th scope="col" class="uw-text-primary">Discount</th>
+              <th scope="col" class="uw-text-primary">Amount to Pay</th>
+              <th scope="col" class="uw-text-primary">Amount Paying</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (invoice of invoiceList; track $index) {
+              <tr>
+                @if ($index==0) {
+                  <td><input class="form-check-input p-3" type="checkbox" checked (change)="fillPayingAmount($event)"></td>
+                } @else {
+                  <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
+                }
+                <td><input type="text" class="form-control invoice-no" [value]="invoice.no"></td>
+                <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.value" disabled></td>
+                <td><input type="number" class="form-control discount" style="width: 90px;" (change)="fillPayingAmount($event)"></td>
+                <td class="">
+                  <div class="d-flex justify-content-between">
+                    <div class="col-auto w-75">
+                      <input type="number" class="form-control amount-to-pay" style="width: 120px;" [value]="invoice.value" disabled>
+                    </div>
+                  </div>
+                </td>
+                <td class="">
+                  <div class="d-flex justify-content-between">
+                    <div class="col-auto w-75">
+                      @if ($index==0) {
+                        <!-- set value of the first invoice -->
+                        <input type="number" class="form-control amount-paying" style="width: 120px;" [value]="invoice.value" (change)="calculateTotal($event)">
+                      } @else {
+                        <input type="number" class="form-control amount-paying" style="width: 120px;" (change)="calculateTotal($event)">
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }            
+          </tbody>
+        </table>
+        <div class="row ms-auto me-2 w-25">
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-tex border-0 bg-white w-50 h5">Total</span>
+            <input type="text" class="form-control border-0 bg-white border-bottom text-end h5 total-pay-bill" disabled id="total-pay-bill" [value]="total">
+          </div>
+        </div>
+
+        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+          <button type="button" class="btn btn-lg" id="pay-n-new" (click)="payAndNew()">Pay & New</button>
+          <button type="button" class="btn btn-lg" id="pay-n-close" (click)="payAndClose()">Pay & Close</button>
+          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

@@ -18,26 +18,42 @@ input{
   color: rgba(69, 71, 71, 0.87);
 }
 
+td input {
+  border-color: #24AECF;
+}
+
 input[type=number] {
   text-align: end;
 }
 
-#tax-enter-bill, #discount-enter-bill {
-  border-color: #24AECF !important;
+td input[disabled] {
+  background-color: white;
+  border-color: #dee2e6;
 }
 
-#save-n-new {
+td input[type="checkbox"] {
+  margin-top: 2px;
+}
+
+input[type="checkBox"]:checked {
+  background-color: #24AECF;
+}
+
+#pay-n-new {
   border-color: #24AECF;
   color: #24AECF;
 }
 
-#save-n-new:hover, #save-n-close:hover {
+#pay-n-new:hover, #pay-n-close:hover {
   background-color: #24AECF;
   color: white;
 }
 
-#save-n-close{
+#pay-n-close{
   background-color: #CF24AE;
   color: white;
 }
 
+tbody:nth-child(1) {
+  background-color: #24AECF;
+}

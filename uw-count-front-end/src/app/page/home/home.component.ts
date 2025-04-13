@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ModalEnterBillService } from '../../service/modal-enter-bill.service';
+import { ModalPayBillService } from '../../service/modal-pay-bill.service';
 
 @Component({
   selector: 'app-home',
@@ -9,10 +10,15 @@ import { ModalEnterBillService } from '../../service/modal-enter-bill.service';
 })
 export class HomeComponent {
 
-  constructor(private enterBillModalService: ModalEnterBillService) {}
+  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService) {}
 
   openEnterBillModal(): void {
-    this.enterBillModalService.isModalOpen.emit(true);    
+    this.enterBillModalService.isEnterBillsOpen.emit(true);    
+  }
+
+  openPayBillModal(): void {
+    console.log("openPayBillModal()");
+    this.payBillModalService.isPayBillsOpen.emit(true);
   }
 
 }

@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class EnterBillComponent implements OnInit, OnDestroy {
 
-  isModalOpen: boolean = true;
+  isEnterBillsOpen: boolean = true;
   private subscription!: Subscription;
   private creditPeriod: number = 14;
 
@@ -26,9 +26,9 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   constructor(private modalService: ModalEnterBillService) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isModalOpen.subscribe(
-      (isModalOpen: boolean) => {
-        this.isModalOpen = true;
+    this.subscription = this.modalService.isEnterBillsOpen.subscribe(
+      (isEnterBillsOpen: boolean) => {
+        this.isEnterBillsOpen = true;
       } 
     );
 
@@ -45,7 +45,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   }
 
   closeModal(): void {
-    this.isModalOpen = false;
+    this.isEnterBillsOpen = false;
     this.subTotal = 0;
     this.discount = 0;
     this.tax = 0;
@@ -109,8 +109,8 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement;
     
-    const unitPriceInput = currentRow.querySelector('.unit-price') as HTMLInputElement;
-    const quantityInput = currentRow.querySelector('.quantity') as HTMLInputElement;
+    const unitPriceInput = currentRow.querySelector('.unit-price');
+    const quantityInput = currentRow.querySelector('.quantity');
     const amount = currentRow.querySelector('.amount');
     
     const totalRowAmounts = tbody.querySelectorAll('.amount');
@@ -152,7 +152,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   saveAndNew(): void {
     this.saveAndClose();
     setTimeout(()=>{
-      this.isModalOpen = true;
+      this.isEnterBillsOpen = true;
     }, 10);
   }
 }
