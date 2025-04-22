@@ -1,0 +1,52 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+.form-control {
+  display: inline-block;
+}
+
+.amount {
+  background-color: white;
+}
+
+input{
+  color: rgba(69, 71, 71, 0.87);
+}
+
+input[type=number] {
+  text-align: end;
+}
+
+#tax-create-invoice, #discount-create-invoice {
+  border-color: #24AECF !important;
+}
+
+#save-n-new {
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+#save-n-new:hover, #save-n-close:hover {
+  background-color: #24AECF;
+  color: white;
+}
+
+#save-n-close{
+  background-color: #CF24AE;
+  color: white;
+}
+
+input[type="checkBox"] {
+  margin-top: 0.5px;
+  border-color: #CF24AE;
+}
+
+input[type="checkBox"]:checked {
+  background-color: #CF24AE;
+}
+

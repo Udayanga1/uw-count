@@ -34,7 +34,7 @@ export class PayBillComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.subscription = this.modalService.isPayBillsOpen.subscribe(
       (isPayBillsOpen: boolean) => {
-        this.isPayBillsOpen = true;
+        this.isPayBillsOpen = isPayBillsOpen;
       } 
     );
 

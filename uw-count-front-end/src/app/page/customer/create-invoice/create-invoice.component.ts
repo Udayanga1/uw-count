@@ -1,19 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ModalEnterBillService } from '../../../service/modal-enter-bill.service';
 import { Subscription } from 'rxjs';
+import { ModalCreateInvoiceService } from '../../../service/modal-create-invoice.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-enter-bill',
+  selector: 'app-create-invoice',
   imports: [FormsModule],
-  templateUrl: './enter-bill.component.html',
-  styleUrl: './enter-bill.component.css'
+  templateUrl: './create-invoice.component.html',
+  styleUrl: './create-invoice.component.css'
 })
-export class EnterBillComponent implements OnInit, OnDestroy {
+export class CreateInvoiceComponent implements OnInit, OnDestroy {
 
-  isEnterBillsOpen: boolean = true;
+  isCreateInvoiceOpen: boolean = true;
   private subscription!: Subscription;
+  
   private creditPeriod: number = 14;
+  private taxRate: number = 0.1;
 
   public subTotal: number = 0;
   public total: number = 0;
@@ -23,18 +25,21 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   invoiceDate: string ='';
   dueDate: string ='';
   
-  constructor(private modalService: ModalEnterBillService) {}
+  constructor(private modalService: ModalCreateInvoiceService) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isEnterBillsOpen.subscribe(
-      (isEnterBillsOpen: boolean) => {
-        this.isEnterBillsOpen = isEnterBillsOpen;
+    this.subscription = this.modalService.isCreateInvoiceOpen.subscribe(
+      (isCreateInvoiceOpen: boolean) => {
+        this.isCreateInvoiceOpen = isCreateInvoiceOpen;
       } 
     );
 
+    console.log("ngOnInit: CreateInvoiceTs");
+    
+
     const today = new Date();
     const due = new Date();
-    due.setDate(today.getDate() + this.creditPeriod); // Example: 30 days from today
+    due.setDate(today.getDate() + this.creditPeriod);
 
     this.invoiceDate = today.toISOString().split('T')[0];
     this.dueDate = due.toISOString().split('T')[0];
@@ -45,7 +50,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   }
 
   closeModal(): void {
-    this.isEnterBillsOpen = false;
+    this.isCreateInvoiceOpen = false;
     this.subTotal = 0;
     this.discount = 0;
     this.tax = 0;
@@ -53,7 +58,6 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   }
 
   addRow(event: any): void{
-    // console.log("addRow: " + event.target.closest('tr').querySelector('.quantity')?.value);
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement
 
@@ -69,15 +73,17 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       });
 
       // Rebind event
-      const accountInput = newRow.querySelector('input[list="accountlist"]');
+      const productInput = newRow.querySelector('input[list="productlist"]');
       const removeButton = newRow.querySelector('button');
       const unitPrice = newRow.querySelector('.unit-price');
       const quantity = newRow.querySelector('.quantity');
-      if (accountInput) {
-        accountInput.addEventListener('change', this.addRow.bind(this));
+      const checkBox = newRow.querySelector('.form-check-input');
+      if (productInput) {
+        productInput.addEventListener('change', this.addRow.bind(this));
         removeButton?.addEventListener('click', this.removeRow.bind(this));
         unitPrice?.addEventListener('change', this.calAmount.bind(this));
         quantity?.addEventListener('change', this.calAmount.bind(this));
+        checkBox?.addEventListener('change', this.calAmount.bind(this));
       }
 
       tbody.insertBefore(newRow, tbody.querySelector('datalist'));
@@ -123,24 +129,39 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     amount.value = rowAmount ? rowAmount : 0;
     
     this.subTotal = 0;
+    this.tax = 0;
     totalRowAmounts.forEach((amount: any)=>{
       const value = amount.value.length>0 ? parseFloat(amount.value) : 0;
+      const taxAmount = amount.parentElement.querySelector('.form-check-input').checked ? value * this.taxRate : 0;
+      this.tax+=taxAmount;
       this.subTotal+= value;
     })
-    this.total = Number(this.subTotal) - Number(this.discount) + Number(this.tax);        
+
+    const taxableSupply = this.tax/this.taxRate;   
+    const taxReductionDueToDiscount: number = parseFloat((this.discount * (taxableSupply/this.subTotal) * this.taxRate).toFixed(2));        
+
+    this.tax-=taxReductionDueToDiscount;
+
+    this.total = this.subTotal - this.discount + this.tax;        
   }
 
   recalculateTotals(): void {
     const tbody = document.querySelector('table tbody');
-    let newSubTotal = 0;
-    
+    this.subTotal=0;
+    this.tax = 0;
     const totalRowAmounts = tbody?.querySelectorAll('.amount') || [];
     totalRowAmounts.forEach((amount: any) => {
       const value = amount.value.length > 0 ? parseFloat(amount.value) : 0;
-      newSubTotal += value;
+      const taxAmount = amount.parentElement.querySelector('.form-check-input').checked ? value * this.taxRate : 0;
+      this.tax+=taxAmount;
+      this.subTotal += value;
     });
-    
-    this.subTotal = newSubTotal;
+
+    const taxableSupply: number = this.tax/this.taxRate;   
+    const taxReductionDueToDiscount: number = parseFloat((this.discount * (taxableSupply/this.subTotal) * this.taxRate).toFixed(2));        
+
+    this.tax-=taxReductionDueToDiscount;
+
     this.total = this.subTotal - this.discount + +this.tax;
   }
 
@@ -152,7 +173,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   saveAndNew(): void {
     this.saveAndClose();
     setTimeout(()=>{
-      this.isEnterBillsOpen = true;
+      this.isCreateInvoiceOpen = true;
     }, 10);
   }
 }

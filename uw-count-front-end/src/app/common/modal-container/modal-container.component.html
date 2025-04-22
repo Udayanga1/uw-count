@@ -10,4 +10,10 @@
       <app-pay-bill />
     </div>
   }
+
+  @if (isCreateInvoiceOpen) {
+    <div class="position-absolute top-0 start-0">
+      <app-create-invoice />
+    </div>
+  }
 </div>
