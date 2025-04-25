@@ -1,0 +1,59 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+.form-control {
+  display: inline-block;
+}
+
+.amount {
+  background-color: white;
+}
+
+input{
+  color: rgba(69, 71, 71, 0.87);
+}
+
+td input {
+  border-color: #24AECF;
+}
+
+input[type=number] {
+  text-align: end;
+}
+
+td input[disabled] {
+  background-color: white;
+  border-color: #dee2e6;
+}
+
+td input[type="checkbox"] {
+  margin-top: 2px;
+}
+
+input[type="checkBox"]:checked {
+  background-color: #24AECF;
+}
+
+#receive-n-new {
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+#receive-n-new:hover, #receive-n-close:hover {
+  background-color: #24AECF;
+  color: white;
+}
+
+#receive-n-close{
+  background-color: #CF24AE;
+  color: white;
+}
+
+tbody:nth-child(1) {
+  background-color: #24AECF;
+}

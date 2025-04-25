@@ -10,15 +10,15 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Customers</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Create Invoice</a></li>
-            <li><a class="dropdown-item" href="#">Receive Payments</a></li>
+            <li><a class="dropdown-item" (click)="openCreateInvoiceModal()" href="#">Create Invoice</a></li>
+            <li><a class="dropdown-item" (click)="openReceivePaymentModal()" href="#">Receive Payments</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Vendors</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Enter Bills</a></li>
-            <li><a class="dropdown-item" href="#">Pay Bills</a></li>
+            <li><a class="dropdown-item" (click)="openEnterBillModal()" href="#">Enter Bills</a></li>
+            <li><a class="dropdown-item" (click)="openPayBillModal()" href="#">Pay Bills</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">

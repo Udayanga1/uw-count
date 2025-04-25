@@ -16,4 +16,9 @@
       <app-create-invoice />
     </div>
   }
+  @if (isReceivePaymentOpen) {
+    <div class="position-absolute top-0 start-0">
+      <app-receive-payment />
+    </div>
+  }
 </div>

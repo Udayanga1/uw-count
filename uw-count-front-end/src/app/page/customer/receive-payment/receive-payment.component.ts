@@ -1,19 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ModalReceivePaymentService } from '../../../service/modal-receive-payment.service';
 import { Subscription } from 'rxjs';
-import { ModalPayBillService } from '../../../service/modal-pay-bill.service';
 
 @Component({
-  selector: 'app-pay-bill',
+  selector: 'app-receive-payment',
   imports: [],
-  templateUrl: './pay-bill.component.html',
-  styleUrl: './pay-bill.component.css'
+  templateUrl: './receive-payment.component.html',
+  styleUrl: './receive-payment.component.css'
 })
+export class ReceivePaymentComponent implements OnInit, OnDestroy{
 
-
-export class PayBillComponent implements OnInit, OnDestroy{
-  isPayBillsOpen: boolean = true;
+  isReceivePaymentOpen: boolean = true;
   private subscription!: Subscription;
   payDate: string = '';
+  
+  private receivedAmount: number = 0;
 
   invoiceList: {no: string, value: number}[] = [
     {no: "inv1",
@@ -29,17 +30,20 @@ export class PayBillComponent implements OnInit, OnDestroy{
 
   total: number = this.invoiceList.length>0 ? this.invoiceList[0].value : 0;
 
-  constructor(private modalService: ModalPayBillService) {}
+  constructor(private modalService: ModalReceivePaymentService) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isPayBillsOpen.subscribe(
-      (isPayBillsOpen: boolean) => {
-        this.isPayBillsOpen = isPayBillsOpen;
+    this.subscription = this.modalService.isReceivePaymentOpen.subscribe(
+      (isReceivePaymentOpen: boolean) => {
+        this.isReceivePaymentOpen = isReceivePaymentOpen;
       } 
     );
 
+    console.log("ngOnInit: receive-palyment.ts");
+    
+
     const today = new Date();
-    this.payDate = today.toISOString().split('T')[0];    
+    this.payDate = today.toISOString().split('T')[0];
   }
 
   ngOnDestroy(): void {
@@ -47,7 +51,7 @@ export class PayBillComponent implements OnInit, OnDestroy{
   }
 
   closeModal() {
-    this.isPayBillsOpen = false;
+    this.isReceivePaymentOpen = false;
   }
 
   fillPayingAmount(event: any): void {
@@ -83,6 +87,8 @@ export class PayBillComponent implements OnInit, OnDestroy{
       const value = row.value.length>0 ? parseFloat(row.value) : 0;
       this.total+=value;
     })
+    console.log("fillPayingAmount(): " + currentRow.querySelector('.form-check-input').checked);
+    
   }
 
   calculateAmountPaying(amountDue: number, discount: number): number {
@@ -104,15 +110,25 @@ export class PayBillComponent implements OnInit, OnDestroy{
     totalInput.value = this.total;
   }
 
-  payAndNew() {
-    this.payAndClose();
+  receiveAndNew() {
+    this.receiveAndClose();
     setTimeout(()=>{
-      this.isPayBillsOpen = true;
+      this.isReceivePaymentOpen = true;
     }, 10);
   }
 
-  payAndClose(){
-    console.log("Paid");
-    this.closeModal();
+  receiveAndClose(){
+    if(this.receivedAmount==this.total){
+      console.log("Received");
+      this.closeModal();
+    } else {
+      alert("Received amount should equal to the total");
+    }
   }
+
+  setReceivedAmount(event: any){
+    this.receivedAmount = event.target.value;
+    console.log(this.receivedAmount);
+  }
+
 }
