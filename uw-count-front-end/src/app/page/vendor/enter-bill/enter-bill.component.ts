@@ -1,7 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ModalEnterBillService } from '../../../service/modal-enter-bill.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { Account } from '../../../models/account';
+import { BillTransaction } from '../../../models/bill-transaction';
+import { Bill } from '../../../models/bill';
 
 @Component({
   selector: 'app-enter-bill',
@@ -15,6 +19,8 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
   private creditPeriod: number = 14;
 
+  private http = inject(HttpClient);
+
   public subTotal: number = 0;
   public total: number = 0;
   public discount: number = 0;
@@ -22,8 +28,12 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   
   invoiceDate: string ='';
   dueDate: string ='';
+  supplier:string = '';
+  invoice:string = '';
+
+  modifiedAccountList:String[] = [];
   
-  constructor(private modalService: ModalEnterBillService) {}
+  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isEnterBillsOpen.subscribe(
@@ -38,6 +48,8 @@ export class EnterBillComponent implements OnInit, OnDestroy {
 
     this.invoiceDate = today.toISOString().split('T')[0];
     this.dueDate = due.toISOString().split('T')[0];
+
+    this.loadChartOfAccounts();
   }
 
   ngOnDestroy(): void {
@@ -50,10 +62,13 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     this.discount = 0;
     this.tax = 0;
     this.total = 0; 
+    this.supplier = ''
   }
 
   addRow(event: any): void{
-    // console.log("addRow: " + event.target.closest('tr').querySelector('.quantity')?.value);
+
+    this.calAmount(event);
+    
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement
 
@@ -112,13 +127,13 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     const unitPriceInput = currentRow.querySelector('.unit-price');
     const quantityInput = currentRow.querySelector('.quantity');
     const amount = currentRow.querySelector('.amount');
-    
+    const account = currentRow.querySelector('.account');
     const totalRowAmounts = tbody.querySelectorAll('.amount');
 
     const unitPrice = parseFloat(unitPriceInput?.value || '0');
     const quantity = parseFloat(quantityInput?.value || '0');
 
-    const rowAmount = unitPrice * quantity;
+    const rowAmount = account.value.length>0 ? unitPrice * quantity : 0;
 
     amount.value = rowAmount ? rowAmount : 0;
     
@@ -145,8 +160,65 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   }
 
   saveAndClose(): void {
-    console.log("save invoice");
-    this.closeModal();
+    if (!this.supplier || !this.invoice || this.total <= 0) {
+      alert('Please fill supplier, invoice number and at least one line item.');
+      return;
+    }
+
+    const tbody = document.querySelector('table tbody');
+    const rows = tbody?.querySelectorAll('tr') || [];
+    const transactions: BillTransaction[] = [];
+
+    rows.forEach(rowElem => {
+      const accountInput = rowElem.querySelector('input.account') as HTMLInputElement;
+      const descInput = rowElem.querySelector('input.form-control[type="text"]') as HTMLInputElement;
+      // const dateInput = this.invoiceDate as HTMLInputElement;
+      const qtyInput = rowElem.querySelector('.quantity') as HTMLInputElement;
+      const priceInput = rowElem.querySelector('.unit-price') as HTMLInputElement;
+      const amountInput = rowElem.querySelector('.amount') as HTMLInputElement;
+
+      if (accountInput.value && +amountInput.value > 0) {
+        transactions.push({
+          id: null,
+          accountId: +accountInput.value.split(' ')[0], // assumes "id - name"
+          description: descInput.value,
+          date: this.invoiceDate as any,
+          qty: +qtyInput.value,
+          unitPrice: +priceInput.value,
+          amount: +amountInput.value,
+          billId: null
+        });
+      }
+    });
+
+    const bill: Bill = {
+      id: null,
+      supplierId: +this.supplier.replace(/\D/g, ''), // parse id
+      invoiceNo: this.invoice,
+      date: this.invoiceDate as any,
+      dueDate: this.dueDate as any,
+      subTotal: this.subTotal,
+      discount: this.discount,
+      tax: this.tax,
+      billTransactions: transactions
+    };
+
+    console.log(bill);
+    
+    
+
+    this.httpClient.post<Bill>('http://localhost:8080/bill/add', bill)
+      .subscribe({
+        next: created => {
+          console.log('Bill created:', created);
+          this.closeModal();
+        },
+        error: err => {
+          console.error('Error creating bill', err);
+          alert('Failed to save bill');
+        }
+      });
+
   }
 
   saveAndNew(): void {
@@ -155,4 +227,13 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       this.isEnterBillsOpen = true;
     }, 10);
   }
+
+  loadChartOfAccounts(): void {
+    this.httpClient.get<Account[]>('assets/chart-of-accounts.json').subscribe((data:Account[]) => {
+      // console.log(data);
+      data.forEach(account=>{
+        this.modifiedAccountList.push(account.number + " - " + account.name)
+      })
+    });
+  }   
 }

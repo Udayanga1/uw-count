@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { EnterBillComponent } from "../../page/vendor/enter-bill/enter-bill.component";
 import { Subscription } from 'rxjs';
 import { ModalEnterBillService } from '../../service/modal-enter-bill.service';
@@ -23,12 +23,12 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   isPayBillsOpen: boolean = false;
   isCreateInvoiceOpen: boolean = false;
   isReceivePaymentOpen: boolean = false;
-
   
   private enterBillSubscription!: Subscription;
   private payBillSubscription!: Subscription;
   private createInvoiceSubscription!: Subscription;
   private receivePaymentSubscription!: Subscription;
+
 
   constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService) {}
 
@@ -63,5 +63,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
     this.createInvoiceSubscription.unsubscribe();
     this.receivePaymentSubscription.unsubscribe();
   }
+
+
 
 }
