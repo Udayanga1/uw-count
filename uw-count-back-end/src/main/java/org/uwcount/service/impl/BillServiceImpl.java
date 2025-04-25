@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uwcount.dto.Bill;
 import org.uwcount.dto.BillTransaction;
 import org.uwcount.entity.BillEntity;
@@ -24,6 +25,7 @@ public class BillServiceImpl implements BillService {
     private final ModelMapper mapper;
 
     @Override
+    @Transactional
     public Bill addBill(Bill billDto) {
         BillEntity billEntity = mapper.map(billDto, BillEntity.class);
 
@@ -46,6 +48,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Bill> getAllBills() {
         return billRepo.findAll()
                 .stream()

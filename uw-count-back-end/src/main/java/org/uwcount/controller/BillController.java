@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uwcount.dto.Bill;
-import org.uwcount.dto.BillTransaction;
 import org.uwcount.service.BillService;
 
 import java.util.List;

@@ -1,7 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModalCreateInvoiceService } from '../../../service/modal-create-invoice.service';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { InvoiceLine } from '../../../models/invoice-line';
+import { Invoice } from '../../../models/invoice';
 
 @Component({
   selector: 'app-create-invoice',
@@ -17,6 +20,8 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
   private creditPeriod: number = 14;
   private taxRate: number = 0.1;
 
+  private http = inject(HttpClient);
+
   public subTotal: number = 0;
   public total: number = 0;
   public discount: number = 0;
@@ -24,8 +29,10 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
   
   invoiceDate: string ='';
   dueDate: string ='';
+  customer: string   = ''; 
+  invoiceNo: string  = '';
   
-  constructor(private modalService: ModalCreateInvoiceService) {}
+  constructor(private modalService: ModalCreateInvoiceService, private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isCreateInvoiceOpen.subscribe(
@@ -166,8 +173,66 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
   }
 
   saveAndClose(): void {
-    console.log("save invoice");
-    this.closeModal();
+    // console.log("save invoice");
+    // this.closeModal();
+    if (!this.customer || this.total <= 0) {
+      alert('Please select a customer and add at least one line item.');
+      return;
+    }
+
+    const tbody = document.querySelector('table tbody');
+    const rows  = tbody?.querySelectorAll('tr') || [];
+    const lines: InvoiceLine[] = [];
+
+    rows.forEach(row => {
+      const prodInput  = row.querySelector('.product') as HTMLInputElement;
+      const descInput  = row.querySelector('.description') as HTMLInputElement;
+      const rateInput  = row.querySelector('.unit-price') as HTMLInputElement;
+      const qtyInput   = row.querySelector('.quantity') as HTMLInputElement;
+      const amtInput   = row.querySelector('.amount') as HTMLInputElement;
+      const taxInput   = row.querySelector('.taxable') as HTMLInputElement;
+
+      if (prodInput.value && +amtInput.value > 0) {
+        lines.push({
+          id:          null,
+          productId:   2,
+          description: descInput.value,
+          rate:        +rateInput.value,
+          quantity:    +qtyInput.value,
+          amount:      +amtInput.value,
+          taxable:     taxInput.checked,
+          invoiceId:   null
+        });
+      }
+    });
+
+    const invoice: Invoice = {
+      id:           null,
+      customerId:   +this.customer.replace(/\D/g,''), // parse out numeric ID
+      invoiceNo:    "25",
+      date:         this.invoiceDate,
+      dueDate:      this.dueDate,
+      subTotal:     this.subTotal,
+      discount:     this.discount,
+      tax:          this.tax,
+      total:        this.total,
+      invoiceLines: lines
+    };
+
+    console.log('Posting invoice:', invoice);
+
+    this.http.post<Invoice>('http://localhost:8080/invoice/add', invoice)
+      .subscribe({
+        next: () => {
+          this.closeModal();
+        },
+        error: err => {
+          console.error('Failed to save invoice', err);
+          alert('Could not save invoice. See console for details.');
+        }
+      });
+
+
   }
 
   saveAndNew(): void {
