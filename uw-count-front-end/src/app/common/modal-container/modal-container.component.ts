@@ -8,10 +8,11 @@ import { CreateInvoiceComponent } from "../../page/customer/create-invoice/creat
 import { ModalCreateInvoiceService } from '../../service/modal-create-invoice.service';
 import { ModalReceivePaymentService } from '../../service/modal-receive-payment.service';
 import { ReceivePaymentComponent } from "../../page/customer/receive-payment/receive-payment.component";
+import { AddVendorComponent } from "../../page/vendor/add-vendor/add-vendor.component";
 
 @Component({
   selector: 'app-modal-container',
-  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent],
+  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent],
   templateUrl: './modal-container.component.html',
   styleUrl: './modal-container.component.css'
 })
@@ -23,11 +24,13 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   isPayBillsOpen: boolean = false;
   isCreateInvoiceOpen: boolean = false;
   isReceivePaymentOpen: boolean = false;
+  isAddSupplier: boolean = false;
   
   private enterBillSubscription!: Subscription;
   private payBillSubscription!: Subscription;
   private createInvoiceSubscription!: Subscription;
   private receivePaymentSubscription!: Subscription;
+  private addSupplierSubscription!: Subscription;
 
 
   constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService) {}
@@ -37,6 +40,11 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
     this.enterBillSubscription = this.modalEnterBillService.isEnterBillsOpen.subscribe(
       (isEnterBillsOpen: boolean) => {
         this.isEnterBillsOpen = isEnterBillsOpen;
+      }
+    );
+    this.addSupplierSubscription = this.modalEnterBillService.isAddSupplierOpen.subscribe(
+      (isAddSupplier: boolean) => {
+        this.isAddSupplier = isAddSupplier;
       }
     );
     this.payBillSubscription = this.modalPayBillService.isPayBillsOpen.subscribe(

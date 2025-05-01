@@ -10,18 +10,21 @@
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Supplier</span>
-              <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier">
-              <datalist id="supplierlist">
-                <option value="Supplier 1">
-                <option value="Supplier 2">
-                <option value="Supplier 3">
-             </datalist>
+              <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier" (change)="onSupplierChange()">
             </div>
+            <datalist id="supplierlist">
+              @for (supplier of supplierList; track $index) {
+                <option value={{supplier}}>
+              }
+           </datalist>
             <div class="input-group mb-3 w-50">
               <span class="input-group-text">Date</span>
               <input type="date" class="form-control" id="invoice-date-enter-bill" [value]="invoiceDate">
             </div>
           </div>
+          @if (showAddSupplierButton) {
+            <button class="btn add-supplier-btn mb-3" (click)="openAddSupplierModal()">Add Supplier</button>
+          }
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Invoice No</span>
@@ -64,8 +67,6 @@
               @for (account of modifiedAccountList; track $index) {
                 <option value={{account}}>
               }
-                <!-- <option value="Account 2">
-                <option value="Account 3"> -->
              </datalist>
             
           </tbody>

@@ -27,7 +27,6 @@ export class HomeComponent {
   }
 
   openReceivePaymentModal(): void {
-    console.log("openReceivePaymentModal()");
     this.receivePaymentService.isReceivePaymentOpen.emit(true);
   }
 }

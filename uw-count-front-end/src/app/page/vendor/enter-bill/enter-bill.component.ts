@@ -15,7 +15,10 @@ import { Bill } from '../../../models/bill';
 })
 export class EnterBillComponent implements OnInit, OnDestroy {
 
-  isEnterBillsOpen: boolean = true;
+  public isEnterBillsOpen: boolean = true;
+  public isAddSupplierOpen: boolean = true;
+
+
   private subscription!: Subscription;
   private creditPeriod: number = 14;
 
@@ -26,10 +29,19 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   public discount: number = 0;
   public tax: number = 0;
   
-  invoiceDate: string ='';
-  dueDate: string ='';
-  supplier:string = '';
-  invoice:string = '';
+  public invoiceDate: string ='';
+  public dueDate: string ='';
+  public supplier:string = '';
+  public invoice:string = '';
+
+  public supplierList: string[] = [
+    'Supplier 1',
+    'Supplier 2',
+    'Supplier 3',
+    'Supplier 4',
+  ]
+
+  public showAddSupplierButton = false;
 
   modifiedAccountList:String[] = [];
   
@@ -203,14 +215,9 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       billTransactions: transactions
     };
 
-    console.log(bill);
-    
-    
-
     this.httpClient.post<Bill>('http://localhost:8080/bill/add', bill)
       .subscribe({
         next: created => {
-          console.log('Bill created:', created);
           this.closeModal();
         },
         error: err => {
@@ -230,10 +237,20 @@ export class EnterBillComponent implements OnInit, OnDestroy {
 
   loadChartOfAccounts(): void {
     this.httpClient.get<Account[]>('assets/chart-of-accounts.json').subscribe((data:Account[]) => {
-      // console.log(data);
       data.forEach(account=>{
         this.modifiedAccountList.push(account.number + " - " + account.name)
       })
     });
-  }   
+  }
+  
+  onSupplierChange(){
+    const exists = this.supplierList.includes(this.supplier);
+    this.showAddSupplierButton = !exists
+    
+  }
+
+  openAddSupplierModal(): void {
+    this.modalService.supplierName = this.supplier;
+    this.modalService.isAddSupplierOpen.emit(true);
+  }
 }

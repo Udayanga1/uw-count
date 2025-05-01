@@ -31,12 +31,17 @@ input[type=number] {
   color: #24AECF;
 }
 
-#save-n-new:hover, #save-n-close:hover {
+#save-n-new:hover, #save-n-close:hover, .add-supplier-btn:hover {
   background-color: #24AECF;
   color: white;
 }
 
 #save-n-close{
+  background-color: #CF24AE;
+  color: white;
+}
+
+.add-supplier-btn {
   background-color: #CF24AE;
   color: white;
 }
