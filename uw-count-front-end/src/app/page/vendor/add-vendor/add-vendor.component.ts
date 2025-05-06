@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModalEnterBillService } from '../../../service/modal-enter-bill.service';
 import { FormsModule } from '@angular/forms';
+import { Supplier } from '../../../models/supplier';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-vendor',
@@ -19,7 +21,7 @@ export class AddVendorComponent implements OnInit, OnDestroy {
 
   private subscription!: Subscription;
 
-  constructor(private modalService: ModalEnterBillService) {}
+  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isAddSupplierOpen
@@ -41,19 +43,45 @@ export class AddVendorComponent implements OnInit, OnDestroy {
   }
 
   addSupplier(): void {
-    console.log('name: '    + this.supplierName);
-    console.log('address: ' + this.supplierAddress);
-    console.log('email: '   + this.supplierEmail);
-    console.log('tel: '     + this.supplierTel);
-    this.closeModal();
+    const supplier: Supplier = {
+      id: null,
+      name: this.supplierName,
+      address: this.supplierAddress,
+      email: this.supplierEmail,
+      contactNo: this.supplierTel,
+      balancePayable: 0
+    };
+
+    this.httpClient.post<Supplier>('http://localhost:8080/supplier/add', supplier)
+      .subscribe({
+        next: created => {
+          this.closeModal();
+        },
+        error: err => {
+          console.error('Error creating bill', err);
+          alert('Failed to save supplier');
+        }
+      });
   }
 
   closeModal(): void {
-    // wipe everything out on close
     this.supplierName    = '';
     this.supplierAddress = '';
     this.supplierEmail   = '';
     this.supplierTel     = '';
     this.isAddSupplierOpen = false;
+    this.modalService.supplierName = '';
+  }
+
+  checkEmailAvailability(): void {
+    this.httpClient.get<Supplier>(`http://localhost:8080/supplier/search/email/${this.supplierEmail}`, {observe: 'response'}).subscribe(res => {
+      alert("this email is registered with " + res.body?.name);
+    })
+  }
+  
+  checkContactNoAvailability(): void {
+    this.httpClient.get<Supplier>(`http://localhost:8080/supplier/search/contact/${this.supplierTel}`, {observe: 'response'}).subscribe(res => {
+      alert("this contact no. is registered with " + res.body?.name);
+    })
   }
 }

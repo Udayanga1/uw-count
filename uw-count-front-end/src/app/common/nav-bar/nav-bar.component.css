@@ -5,3 +5,7 @@
 .uw-bg-primary {
   background-color: #24AECF;
 }
+
+.nav-link:hover, .dropdown-item:hover {
+  cursor: pointer;
+}

@@ -29,7 +29,7 @@ public class BillServiceImpl implements BillService {
     public Bill addBill(Bill billDto) {
         BillEntity billEntity = mapper.map(billDto, BillEntity.class);
 
-        // Map & attach each transaction, linking back to the parent
+        // Map & attach each transaction
         List<BillTransactionEntity> txEntities = billDto.getBillTransactions()
                 .stream()
                 .map(txDto -> {
@@ -40,10 +40,8 @@ public class BillServiceImpl implements BillService {
                 .collect(Collectors.toList());
         billEntity.setTransactionDetails(txEntities);
 
-        // Save the whole graph
         BillEntity saved = billRepo.save(billEntity);
 
-        // Return fully-populated DTO (including generated IDs)
         return mapper.map(saved, Bill.class);
     }
 

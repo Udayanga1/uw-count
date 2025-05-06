@@ -30,4 +30,8 @@ export class NavBarComponent {
     this.receivePaymentService.isReceivePaymentOpen.emit(true);
   }
 
+  openAddSupplierModal(): void {
+    this.enterBillModalService.isAddSupplierOpen.emit(true);
+  }
+
 }
