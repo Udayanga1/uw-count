@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.uwcount.dto.Supplier;
 import org.uwcount.service.SupplierService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/supplier")
 @RequiredArgsConstructor
@@ -16,8 +18,12 @@ public class SupplierController {
     @PostMapping("/add")
     public ResponseEntity<Supplier> add(@RequestBody Supplier supplier) {
         Supplier created = service.addSupplier(supplier);
-        System.out.println("created: " + created);
         return ResponseEntity.ok(created);
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<Supplier>> getAll(){
+        return ResponseEntity.ok(service.getAllSuppliers());
     }
 
     @GetMapping("/search/email/{email}")

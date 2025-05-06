@@ -4,6 +4,7 @@ import { ModalEnterBillService } from '../../../service/modal-enter-bill.service
 import { FormsModule } from '@angular/forms';
 import { Supplier } from '../../../models/supplier';
 import { HttpClient } from '@angular/common/http';
+import { SupplierService } from '../../../service/supplier.service';
 
 @Component({
   selector: 'app-add-vendor',
@@ -21,21 +22,22 @@ export class AddVendorComponent implements OnInit, OnDestroy {
 
   private subscription!: Subscription;
 
-  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient) {}
+  constructor(private supplierService: SupplierService , private httpClient: HttpClient) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isAddSupplierOpen
+    this.subscription = this.supplierService.isAddSupplierOpen
       .subscribe((isOpen: boolean) => {
         this.isAddSupplierOpen = isOpen;
 
         if (isOpen) {
-          this.supplierName = this.modalService.supplierName;
+          this.supplierName = this.supplierService.supplierName;
 
           this.supplierEmail   = '';
           this.supplierTel     = '';
           this.supplierAddress = '';
         }
       });
+    
   }
 
   ngOnDestroy(): void {
@@ -70,7 +72,11 @@ export class AddVendorComponent implements OnInit, OnDestroy {
     this.supplierEmail   = '';
     this.supplierTel     = '';
     this.isAddSupplierOpen = false;
-    this.modalService.supplierName = '';
+    this.supplierService.supplierName = '';
+
+    this.supplierService.loadSuppliers().subscribe(suppliers => {
+      this.supplierService.supplierList = suppliers;
+    })
   }
 
   checkEmailAvailability(): void {

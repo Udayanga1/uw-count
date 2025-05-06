@@ -8,6 +8,7 @@ import org.uwcount.entity.SupplierEntity;
 import org.uwcount.repository.SupplierRepository;
 import org.uwcount.service.SupplierService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,7 +49,10 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public List<Supplier> getAllSuppliers() {
-        return List.of();
+        List<Supplier> supplierList = new ArrayList<>();
+        List<SupplierEntity> all = repository.findAll();
+        all.forEach(supplierEntity -> supplierList.add(mapper.map(supplierEntity, Supplier.class)));
+        return supplierList;
     }
 
     @Override

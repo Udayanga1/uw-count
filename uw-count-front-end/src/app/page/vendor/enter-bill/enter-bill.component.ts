@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { Account } from '../../../models/account';
 import { BillTransaction } from '../../../models/bill-transaction';
 import { Bill } from '../../../models/bill';
+import { SupplierService } from '../../../service/supplier.service';
+import { Supplier } from '../../../models/supplier';
 
 @Component({
   selector: 'app-enter-bill',
@@ -34,18 +36,13 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   public supplier:string = '';
   public invoice:string = '';
 
-  public supplierList: string[] = [
-    'Supplier 1',
-    'Supplier 2',
-    'Supplier 3',
-    'Supplier 4',
-  ]
+  public supplierList: String[] = [];
 
   public showAddSupplierButton = false;
 
   modifiedAccountList:String[] = [];
   
-  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient) {}
+  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient, private supplierService: SupplierService) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isEnterBillsOpen.subscribe(
@@ -62,6 +59,11 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     this.dueDate = due.toISOString().split('T')[0];
 
     this.loadChartOfAccounts();
+
+    this.supplierService.loadSuppliers().subscribe(suppliers => {
+      this.supplierService.supplierList = suppliers;
+      this.supplierList = suppliers.map(s => s.name);
+    })
   }
 
   ngOnDestroy(): void {
@@ -74,7 +76,9 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     this.discount = 0;
     this.tax = 0;
     this.total = 0; 
-    this.supplier = ''
+    this.supplier = '';
+
+    this.supplierList = this.supplierService.supplierList.map(s=>s.name);
   }
 
   addRow(event: any): void{
@@ -225,6 +229,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
           alert('Failed to save bill');
         }
       });
+    
 
   }
 
@@ -246,11 +251,11 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   onSupplierChange(){
     const exists = this.supplierList.includes(this.supplier);
     this.showAddSupplierButton = !exists
-    
+    this.supplierList = this.supplierService.supplierList.map(s=>s.name);
   }
 
   openAddSupplierModal(): void {
-    this.modalService.supplierName = this.supplier;
-    this.modalService.isAddSupplierOpen.emit(true);
+    this.supplierService.supplierName = this.supplier;
+    this.supplierService.isAddSupplierOpen.emit(true);
   }
 }

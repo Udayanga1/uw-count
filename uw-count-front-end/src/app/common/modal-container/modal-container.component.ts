@@ -9,6 +9,7 @@ import { ModalCreateInvoiceService } from '../../service/modal-create-invoice.se
 import { ModalReceivePaymentService } from '../../service/modal-receive-payment.service';
 import { ReceivePaymentComponent } from "../../page/customer/receive-payment/receive-payment.component";
 import { AddVendorComponent } from "../../page/vendor/add-vendor/add-vendor.component";
+import { SupplierService } from '../../service/supplier.service';
 
 @Component({
   selector: 'app-modal-container',
@@ -33,7 +34,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   private addSupplierSubscription!: Subscription;
 
 
-  constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService) {}
+  constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService) {}
 
   ngOnInit(): void {
     // Subscribe to modal state changes
@@ -42,7 +43,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
         this.isEnterBillsOpen = isEnterBillsOpen;
       }
     );
-    this.addSupplierSubscription = this.modalEnterBillService.isAddSupplierOpen.subscribe(
+    this.addSupplierSubscription = this.supplierService.isAddSupplierOpen.subscribe(
       (isAddSupplier: boolean) => {
         this.isAddSupplier = isAddSupplier;
       }
