@@ -1,13 +1,46 @@
 package org.uwcount.config;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.uwcount.entity.AccountTypesEntity;
+import org.uwcount.repository.AccountTypesRepository;
 
+import java.util.HashMap;
+
+@RequiredArgsConstructor
 @Configuration
 public class Config {
+
+    private final AccountTypesRepository repository;
+
     @Bean
     public ModelMapper getMapper(){
         return new ModelMapper();
+    }
+
+    @Bean
+    CommandLineRunner initAccountTypes() {
+        HashMap<Integer, String> accountTypes = new HashMap<Integer, String>();
+        accountTypes.put(1, "Cash_And_Bank");
+        accountTypes.put(2, "Other_Current_Asset");
+        accountTypes.put(3, "Non_Current_Asset");
+        accountTypes.put(4, "Credit_Card");
+        accountTypes.put(5, "Other_Current_Liability");
+        accountTypes.put(6, "Non_Current_Liability");
+        accountTypes.put(7, "Equity");
+        accountTypes.put(8, "Revenue");
+        accountTypes.put(9, "Other_Revenue");
+        accountTypes.put(10, "Expense");
+        accountTypes.put(11, "Other_Expense");
+        return args -> {
+            for (Integer i : accountTypes.keySet()) {
+                AccountTypesEntity entity = new AccountTypesEntity(i, accountTypes.get(i));
+                repository.save(entity);
+            }
+        };
     }
 }
