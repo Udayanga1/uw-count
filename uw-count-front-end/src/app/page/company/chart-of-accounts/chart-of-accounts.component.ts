@@ -38,10 +38,9 @@ export class ChartOfAccountsComponent implements OnInit, OnDestroy {
         this.isChartOfAccountsOpen = isChartOfAccountsOpen;
       } 
     );
-    
-    this.accountListSubscription = this.modalService.getAccounts().subscribe(accounts => {
-      this.accountList = accounts;
-    })
+
+    this.accountListSubscription = this.modalService.getAccounts()
+      .subscribe(list => this.accountList = list);
     
   }
 
@@ -76,10 +75,26 @@ export class ChartOfAccountsComponent implements OnInit, OnDestroy {
   }
 
   addAccount() {
-    this.accountList.push({ ...this.newAccount });
-    this.resetNew();
-    this.showAddForm = false;
+    const data: any = {
+        accountCode: this.newAccount.code,
+        name: this.newAccount.name,
+        typeId: this.newAccount.type
+    }
+
+    this.httpClient.post<any>('http://localhost:8080/account/add', data)
+      .subscribe({
+        next: created => {
+          this.modalService.getAccounts()
+            .subscribe(list => {
+              this.accountList = list;
+              this.resetNew();
+              this.showAddForm = false;
+            });
+        },
+        error: err => {
+          console.error('Error creating account', err);
+          alert('Failed to save account');
+        }
+      });
   }
-
-
 }

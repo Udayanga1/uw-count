@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.uwcount.dto.Account;
+import org.uwcount.dto.AccountAlternative;
 import org.uwcount.entity.AccountEntity;
 import org.uwcount.repository.AccountRepository;
 import org.uwcount.service.AccountService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +60,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean deleteAccount(Integer code) {
         return null;
+    }
+
+    @Override
+    public List<AccountAlternative> getAllAccountsWithTypeName() {
+        return repository.findAll().stream()
+                .map(e -> mapper.map(e, AccountAlternative.class))
+                .collect(Collectors.toList());
     }
 }

@@ -18,6 +18,8 @@ public class AccountEntity {
     private Integer accountCode;
     @Column(nullable = false)
     private String name;
-    @Column(name = "type_id", nullable = false)
-    private Integer typeId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id", nullable = false)
+    private AccountTypesEntity typeId;
 }

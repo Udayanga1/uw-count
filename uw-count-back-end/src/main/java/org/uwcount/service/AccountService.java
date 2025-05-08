@@ -1,6 +1,7 @@
 package org.uwcount.service;
 
 import org.uwcount.dto.Account;
+import org.uwcount.dto.AccountAlternative;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface AccountService {
     List<Account> getAllAccounts();
     Account updateAccount(Account account);
     Boolean deleteAccount(Integer code);
+
+    List<AccountAlternative> getAllAccountsWithTypeName();
 }

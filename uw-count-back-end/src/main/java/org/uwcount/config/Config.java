@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.uwcount.dto.AccountAlternative;
+import org.uwcount.entity.AccountEntity;
 import org.uwcount.entity.AccountTypesEntity;
 import org.uwcount.repository.AccountTypesRepository;
 
@@ -18,8 +20,18 @@ public class Config {
     private final AccountTypesRepository repository;
 
     @Bean
-    public ModelMapper getMapper(){
-        return new ModelMapper();
+    public ModelMapper getMapper() {
+        ModelMapper mapper = new ModelMapper();
+
+        // when mapping AccountEntity → AccountAlternative,
+        // use accountEntity.getTypeId().getName() for the DTO's 'type' property
+        mapper.typeMap(AccountEntity.class, AccountAlternative.class)
+                .addMapping(
+                        src -> src.getTypeId().getName(),
+                        AccountAlternative::setType
+                );
+
+        return mapper;
     }
 
     @Bean
