@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { EventEmitter, inject, Injectable } from '@angular/core';
 import { Account } from '../models/account';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,10 @@ export class ChartOfAccountsService {
 
   constructor(private http: HttpClient) {}
 
-  getAccounts(): Account[] {
-    let accountList: Account[] = [];
-    this.httpClient.get<Account[]>(this.url).subscribe((data:Account[]) => {
-      // console.log(data);
-      accountList = data;
-    });
-      
-    return accountList; 
+  isChartOfAccountsOpen = new EventEmitter<boolean>();
+
+  getAccounts(): Observable<Account[]> {
+    return this.http.get<Account[]>(this.url);
   }
 
 }

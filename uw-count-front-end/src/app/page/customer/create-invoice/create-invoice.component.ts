@@ -39,10 +39,7 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
       (isCreateInvoiceOpen: boolean) => {
         this.isCreateInvoiceOpen = isCreateInvoiceOpen;
       } 
-    );
-
-    console.log("ngOnInit: CreateInvoiceTs");
-    
+    );   
 
     const today = new Date();
     const due = new Date();

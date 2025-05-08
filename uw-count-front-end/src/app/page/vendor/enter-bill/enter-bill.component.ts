@@ -243,7 +243,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   loadChartOfAccounts(): void {
     this.httpClient.get<Account[]>('assets/chart-of-accounts.json').subscribe((data:Account[]) => {
       data.forEach(account=>{
-        this.modifiedAccountList.push(account.number + " - " + account.name)
+        this.modifiedAccountList.push(account.code + " - " + account.name)
       })
     });
   }

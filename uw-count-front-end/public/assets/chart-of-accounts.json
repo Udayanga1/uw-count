@@ -1,91 +1,91 @@
 [
   {
-    "number": "1001",
+    "code": "1001",
     "name": "Cash",
     "type": "Cash_And_Bank"
   },
   {
-    "number": "1002",
+    "code": "1002",
     "name": "Bank: Savings Account",
     "type": "Cash_And_Bank"
   },
   {
-    "number": "1003",
+    "code": "1003",
     "name": "Bank: Saving Account",
     "type": "Cash_And_Bank"
   },
   {
-    "number": "1100",
+    "code": "1100",
     "name": "Accounts Receivable",
-    "type": "Current_Asset"
+    "type": "Other_Current_Asset"
   },
   {
-    "number": "1200",
+    "code": "1200",
     "name": "Prepaid Expenses",
-    "type": "Current_Asset"
+    "type": "Other_Current_Asset"
   },
   {
-    "number": "2001",
+    "code": "2001",
     "name": "Plant & Equipment",
     "type": "Non_Current_Asset"
   },
   {
-    "number": "3001",
+    "code": "3001",
     "name": "Credit Card",
     "type": "Credit_Card"
   },
   {
-    "number": "3100",
+    "code": "3100",
     "name": "Accounts Payable",
     "type": "Current_Liability"
   },
   {
-    "number": "3200",
+    "code": "3200",
     "name": "Accrued Expenses",
     "type": "Current_Liability"
   },
   {
-    "number": "4000",
+    "code": "4000",
     "name": "Long Term Liabilities",
     "type": "Non_Current_Liability"
   },
   {
-    "number": "5000",
+    "code": "5000",
     "name": "Owner’s Equity",
     "type": "Equity"
   },
   {
-    "number": "5001",
+    "code": "5001",
     "name": "Software Development Revenue",
     "type": "Revenue"
   },
   {
-    "number": "6001",
+    "code": "6001",
     "name": "Other Revenue",
     "type": "Other_Revenue"
   },
   {
-    "number": "7000",
+    "code": "7000",
     "name": "Salary Expense",
     "type": "Expense"
   },
   {
-    "number": "7100",
+    "code": "7100",
     "name": "Rent Expense",
     "type": "Expense"
   },
   {
-    "number": "7200",
+    "code": "7200",
     "name": "Utilities Expense",
     "type": "Expense"
   },
   {
-    "number": "7300",
+    "code": "7300",
     "name": "Office Supplies Expense",
     "type": "Expense"
   },
   {
-    "number": "8000",
+    "code": "8000",
     "name": "Other Expenses",
     "type": "Other_Expense"
   }

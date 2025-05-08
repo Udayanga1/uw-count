@@ -1,0 +1,18 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+#btn-save-new-account {
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+#btn-save-new-account:hover {
+  background-color: #24AECF;
+  color: white;
+}
+

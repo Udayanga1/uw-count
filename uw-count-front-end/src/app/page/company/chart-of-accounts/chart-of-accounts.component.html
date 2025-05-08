@@ -1,0 +1,99 @@
+@if (isChartOfAccountsOpen) {
+  <div class="position-static d-block p-4" style="max-width: 1000px;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-4 shadow p-3 bg-white">
+        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+          <h1 class="modal-title fs-5 uw-text-primary">Chart Of Accounts</h1>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+
+        @if(showAddForm) {
+          <div class="border p-3 rounded mb-1">
+            <div class="row g-2">
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Code"
+                       [(ngModel)]="newAccount.code" />
+              </div>
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Name"
+                       [(ngModel)]="newAccount.name" />
+              </div>
+              <div class="col">
+                <select class="form-select" [(ngModel)]="newAccount.type">
+                    <option disabled>Type</option>
+                    <option value="1">Cash and Bank</option>
+                    <option value="2">Other Current Asset</option>
+                    <option value="3">Non Current Asset</option>
+                    <option value="4">Credit Card</option>
+                    <option value="5">Other Current Liability</option>
+                    <option value="6">Non Current Liability</option>
+                    <option value="7">Equity</option>
+                    <option value="8">Revenue</option>
+                    <option value="9">Other Revenue</option>
+                    <option value="10">Expense</option>
+                    <option value="11">Other Expense</option>
+                </select>
+              </div>
+              <div class="col-auto d-flex gap-1">
+                <button class="btn" id="btn-save-new-account" (click)="addAccount()" [disabled]="!newAccount.code || !newAccount.name || newAccount.type=='Type'">
+                  Save
+                </button>
+                <button class="btn btn-outline-secondary" (click)="showAddForm = false; resetNew()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="my-2-3 d-flex align-items-center gap-2">
+          <button class="btn btn-primary" (click)="showAddForm = true">
+            + Add New Account
+          </button>
+        </div>
+
+        <div class="d-flex gap-2 my-3">
+          <input type="text"
+                 class="form-control"
+                 placeholder="Filter by code, name or type"
+                 [(ngModel)]="filterText" />
+  
+          <select class="form-select" [(ngModel)]="sortField">
+            <option value="code">Code</option>
+            <option value="name">Name</option>
+            <option value="type">Type</option>
+          </select>
+  
+          <button class="btn btn-outline-secondary"
+                  (click)="sortDirection = (sortDirection === 'asc' ? 'desc' : 'asc')">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </button>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="uw-text-secondary">Code</th>
+              <th scope="col" class="uw-text-secondary">Name</th>
+              <th scope="col" class="uw-text-secondary">Type</th>
+            </tr>
+            @for (account of displayedAccounts; track $index) {
+              <tr>
+                <td>{{account.code}}</td>
+                <td>{{account.name}}</td>
+                <td>{{account.type}}</td>
+              </tr>
+            }
+          </thead>
+          <tbody>        
+          </tbody>
+        </table>
+
+        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

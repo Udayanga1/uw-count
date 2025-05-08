@@ -25,17 +25,17 @@ public class Config {
     @Bean
     CommandLineRunner initAccountTypes() {
         HashMap<Integer, String> accountTypes = new HashMap<Integer, String>();
-        accountTypes.put(1, "Cash_And_Bank");
-        accountTypes.put(2, "Other_Current_Asset");
-        accountTypes.put(3, "Non_Current_Asset");
-        accountTypes.put(4, "Credit_Card");
-        accountTypes.put(5, "Other_Current_Liability");
-        accountTypes.put(6, "Non_Current_Liability");
+        accountTypes.put(1, "Cash and Bank");
+        accountTypes.put(2, "Other Current Asset");
+        accountTypes.put(3, "Non Current Asset");
+        accountTypes.put(4, "Credit Card");
+        accountTypes.put(5, "Other Current Liability");
+        accountTypes.put(6, "Non Current Liability");
         accountTypes.put(7, "Equity");
         accountTypes.put(8, "Revenue");
-        accountTypes.put(9, "Other_Revenue");
+        accountTypes.put(9, "Other Revenue");
         accountTypes.put(10, "Expense");
-        accountTypes.put(11, "Other_Expense");
+        accountTypes.put(11, "Other Expense");
         return args -> {
             for (Integer i : accountTypes.keySet()) {
                 AccountTypesEntity entity = new AccountTypesEntity(i, accountTypes.get(i));
