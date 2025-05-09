@@ -8,6 +8,7 @@ import { BillTransaction } from '../../../models/bill-transaction';
 import { Bill } from '../../../models/bill';
 import { SupplierService } from '../../../service/supplier.service';
 import { Supplier } from '../../../models/supplier';
+import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 
 @Component({
   selector: 'app-enter-bill',
@@ -42,7 +43,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
 
   modifiedAccountList:String[] = [];
   
-  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient, private supplierService: SupplierService) {}
+  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient, private supplierService: SupplierService, private coaService: ChartOfAccountsService) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isEnterBillsOpen.subscribe(
@@ -241,11 +242,14 @@ export class EnterBillComponent implements OnInit, OnDestroy {
   }
 
   loadChartOfAccounts(): void {
-    this.httpClient.get<Account[]>('assets/chart-of-accounts.json').subscribe((data:Account[]) => {
-      data.forEach(account=>{
-        this.modifiedAccountList.push(account.code + " - " + account.name)
+    
+
+    this.coaService.getAccounts().forEach(row=>{
+      row.forEach(item=>{
+        this.modifiedAccountList.push(item.code + " " + item.name)
       })
-    });
+      
+    })
   }
   
   onSupplierChange(){
