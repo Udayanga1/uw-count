@@ -27,6 +27,7 @@ public class BillServiceImpl implements BillService {
     @Override
     @Transactional
     public Bill addBill(Bill billDto) {
+        billDto.setPayableBal(billDto.getSubTotal() - billDto.getDiscount() + billDto.getTax());
         BillEntity billEntity = mapper.map(billDto, BillEntity.class);
 
         // Map & attach each transaction

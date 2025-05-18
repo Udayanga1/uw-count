@@ -6,6 +6,17 @@
   color: #CF24AE;
 }
 
+.add-new-account {
+  background-color: white;
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+.add-new-account:hover {
+  background-color: #24AECF;
+  color: white;
+}
+
 #btn-save-new-account {
   border-color: #24AECF;
   color: #24AECF;
@@ -15,4 +26,6 @@
   background-color: #24AECF;
   color: white;
 }
+
+
 

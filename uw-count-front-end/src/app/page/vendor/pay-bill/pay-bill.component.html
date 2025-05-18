@@ -10,7 +10,7 @@
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Supplier</span>
-              <input type="search" list="supplierlist" class="form-control" >
+              <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier">
               <datalist id="supplierlist">
                 <option value="Supplier 1">
                 <option value="Supplier 2">
@@ -26,18 +26,17 @@
             <div class="input-group mb-3">
               <span class="input-group-text">Payment Method</span>
               <select class="form-select" id="inputGroupSelect01">
-                <option value="1">Cash</option>
-                <option value="2">Bank</option>
-                <option value="3">Credit Card</option>
+                <option value="1">Cash and Bank</option>
+                <option value="2">Credit Card</option>
               </select>
             </div>
             <div class="input-group mb-3">
-              <span class="input-group-text">Account</span>
-              <input type="search" list="pay-accountlist" class="form-control" >
+              <span class="input-group-text">Paying Account</span>
+              <input type="search" list="pay-accountlist" class="form-control" [(ngModel)]= "payingAccount">
               <datalist id="pay-accountlist">
-                <option value="Account 1">
-                <option value="Account 2">
-                <option value="Account 3">
+                @for (account of cashAndBankAccountList; track $index) {
+                  <option value={{account.name}}>
+                }
              </datalist>
             </div>
             

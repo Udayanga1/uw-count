@@ -1,19 +1,25 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModalPayBillService } from '../../../service/modal-pay-bill.service';
+import { FormsModule } from '@angular/forms';
+import { Account } from '../../../models/account';
+import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 
 @Component({
   selector: 'app-pay-bill',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './pay-bill.component.html',
   styleUrl: './pay-bill.component.css'
 })
 
 
 export class PayBillComponent implements OnInit, OnDestroy{
-  isPayBillsOpen: boolean = true;
+  public isPayBillsOpen: boolean = true;
   private subscription!: Subscription;
-  payDate: string = '';
+  public payDate: string = '';
+
+  public supplier = '';
+  public payingAccount = '';
 
   invoiceList: {no: string, value: number}[] = [
     {no: "inv1",
@@ -27,9 +33,11 @@ export class PayBillComponent implements OnInit, OnDestroy{
     },
   ];
 
+  cashAndBankAccountList:Account[] = [];
+
   total: number = this.invoiceList.length>0 ? this.invoiceList[0].value : 0;
 
-  constructor(private modalService: ModalPayBillService) {}
+  constructor(private modalService: ModalPayBillService, private coaService: ChartOfAccountsService) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isPayBillsOpen.subscribe(
@@ -39,7 +47,9 @@ export class PayBillComponent implements OnInit, OnDestroy{
     );
 
     const today = new Date();
-    this.payDate = today.toISOString().split('T')[0];    
+    this.payDate = today.toISOString().split('T')[0];
+    
+    this.loadCashAndBankOfAccounts();
   }
 
   ngOnDestroy(): void {
@@ -61,10 +71,11 @@ export class PayBillComponent implements OnInit, OnDestroy{
     const amountToPay = currentRow.querySelector('.amount-to-pay');
     const amountPaying = currentRow.querySelector('.amount-paying');
     const payingAmountRows = currentRow.parentElement.querySelectorAll('.amount-paying');
+    const checkBox = currentRow.querySelector('.form-check-input');
 
     if(amountPaying.value > 0 && amountToPay.value!=amountPaying.value){
         changeAmountPaying = false;
-    } 
+    }
 
     const amountToPayValue: number = this.calculateAmountPaying(invoiceAmount.value, discount.value);
 
@@ -112,7 +123,23 @@ export class PayBillComponent implements OnInit, OnDestroy{
   }
 
   payAndClose(){
+    if (!this.supplier || !this.payingAccount || this.total <= 0) {
+      alert('Please fill supplier, paying account and at least one line item.');
+      return;
+    }
     console.log("Paid");
     this.closeModal();
   }
+
+  loadCashAndBankOfAccounts(): void {
+    this.coaService.getAccounts().forEach(row=>{
+      row.forEach(item=>{
+        if (item.type=="Cash and Bank" || item.type=="Credit Card") {
+          this.cashAndBankAccountList.push(item)
+        }
+      })
+      
+    })
+  }
+
 }

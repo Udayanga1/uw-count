@@ -33,6 +33,8 @@ public class BillEntity {
     private Double subTotal;
     private Double discount;
     private Double tax;
+    @Column(name = "payable_bal")
+    private Double payableBal;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BillTransactionEntity> transactionDetails = new ArrayList<>();

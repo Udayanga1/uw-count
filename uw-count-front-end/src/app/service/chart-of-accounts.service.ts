@@ -10,11 +10,8 @@ export class ChartOfAccountsService {
 
   private url = 'http://localhost:8080/account/get-all-alternative';
 
-  // private httpClient = inject(HttpClient);
-
   constructor(private http: HttpClient) {}
 
-  private accountList: Account[] = [];
 
   isChartOfAccountsOpen = new EventEmitter<boolean>();
 

@@ -7,4 +7,5 @@ export class ModalPayBillService {
 
   isPayBillsOpen = new EventEmitter<boolean>();
   
+  
 }

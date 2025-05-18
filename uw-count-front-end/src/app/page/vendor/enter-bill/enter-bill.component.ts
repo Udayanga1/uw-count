@@ -78,6 +78,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     this.tax = 0;
     this.total = 0; 
     this.supplier = '';
+    this.invoice = '';
 
     this.supplierList = this.supplierService.supplierList.map(s=>s.name);
   }
@@ -236,13 +237,13 @@ export class EnterBillComponent implements OnInit, OnDestroy {
 
   saveAndNew(): void {
     this.saveAndClose();
-    setTimeout(()=>{
-      this.isEnterBillsOpen = true;
-    }, 10);
+    this.modalService.isEnterBillsOpen.emit(true);
+    // setTimeout(()=>{
+    //   this.isEnterBillsOpen = true;
+    // }, 10);
   }
 
   loadChartOfAccounts(): void {
-    
 
     this.coaService.getAccounts().forEach(row=>{
       row.forEach(item=>{

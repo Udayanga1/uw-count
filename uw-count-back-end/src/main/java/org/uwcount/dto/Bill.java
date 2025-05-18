@@ -19,5 +19,6 @@ public class Bill {
     private Double subTotal;
     private Double discount;
     private Double tax;
+    private Double payableBal;
     private List<BillTransaction> billTransactions;
 }
