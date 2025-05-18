@@ -218,6 +218,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       subTotal: this.subTotal,
       discount: this.discount,
       tax: this.tax,
+      payableBal: 0,
       billTransactions: transactions
     };
 

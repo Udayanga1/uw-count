@@ -4,6 +4,9 @@ import { ModalPayBillService } from '../../../service/modal-pay-bill.service';
 import { FormsModule } from '@angular/forms';
 import { Account } from '../../../models/account';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
+import { Bill } from '../../../models/bill';
+import { Supplier } from '../../../models/supplier';
+import { SupplierService } from '../../../service/supplier.service';
 
 @Component({
   selector: 'app-pay-bill',
@@ -20,24 +23,17 @@ export class PayBillComponent implements OnInit, OnDestroy{
 
   public supplier = '';
   public payingAccount = '';
+  public paymentMethod = '1';
 
-  invoiceList: {no: string, value: number}[] = [
-    {no: "inv1",
-    value: 1250
-    },
-    {no: "inv2",
-    value: 1350
-    },
-    {no: "inv3",
-    value: 1200
-    },
-  ];
+  invoiceList: Bill[] = [];
 
-  cashAndBankAccountList:Account[] = [];
+  payingAccountList:Account[] = [];
 
-  total: number = this.invoiceList.length>0 ? this.invoiceList[0].value : 0;
+  supplierList: Supplier[] = [];
 
-  constructor(private modalService: ModalPayBillService, private coaService: ChartOfAccountsService) {}
+  total: number = this.invoiceList.length>0 ? this.invoiceList[0].payableBal : 0;
+
+  constructor(private modalService: ModalPayBillService, private coaService: ChartOfAccountsService, private supplierService: SupplierService) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isPayBillsOpen.subscribe(
@@ -50,6 +46,13 @@ export class PayBillComponent implements OnInit, OnDestroy{
     this.payDate = today.toISOString().split('T')[0];
     
     this.loadCashAndBankOfAccounts();
+
+    this.supplierService.loadSuppliers().subscribe(suppliers => {
+      this.supplierService.supplierList = suppliers;
+      
+      this.supplierList = suppliers.map(s => s);
+    })
+    
   }
 
   ngOnDestroy(): void {
@@ -127,19 +130,47 @@ export class PayBillComponent implements OnInit, OnDestroy{
       alert('Please fill supplier, paying account and at least one line item.');
       return;
     }
+    this.supplier = '';
+    this.invoiceList = [];
     console.log("Paid");
     this.closeModal();
   }
 
   loadCashAndBankOfAccounts(): void {
-    this.coaService.getAccounts().forEach(row=>{
-      row.forEach(item=>{
-        if (item.type=="Cash and Bank" || item.type=="Credit Card") {
-          this.cashAndBankAccountList.push(item)
-        }
+    this.payingAccountList = [];
+    console.log(this.paymentMethod.valueOf());
+    if(this.paymentMethod.valueOf() == "1" ){
+      this.coaService.getAccounts().forEach(row=>{
+        row.forEach(item=>{
+          if (item.type=="Cash and Bank") {
+            this.payingAccountList.push(item)
+          }
+        })
+        
       })
-      
+    } else if(this.paymentMethod.valueOf() == "2") {
+      this.coaService.getAccounts().forEach(row=>{
+        row.forEach(item=>{
+          if (item.type=="Credit Card") {
+            this.payingAccountList.push(item)
+          }
+        })
+      })
+    }
+  }
+
+  loadSupplierInvoices(supplierName: string): void {
+    this.modalService.getSupplierBills(supplierName).forEach(row => {
+      row.forEach(invoice => {
+        this.invoiceList.push(invoice)
+      })
     })
+  }
+
+  setSupplier() {
+    this.invoiceList=[];
+    this.modalService.supplierName = this.supplier;
+    this.loadSupplierInvoices(this.supplier);
   }
 
 }

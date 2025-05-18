@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,10 +22,8 @@ public class BillEntity {
     @Column(name = "invoice_no", nullable = false)
     private String invoiceNo;
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate date;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
     @Column(name = "sub_total", nullable = false)

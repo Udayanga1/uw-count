@@ -10,12 +10,12 @@
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Supplier</span>
-              <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier">
+              <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier" (change)="setSupplier()">
               <datalist id="supplierlist">
-                <option value="Supplier 1">
-                <option value="Supplier 2">
-                <option value="Supplier 3">
-             </datalist>
+                @for (supplier of supplierList; track $index) {
+                  <option value={{supplier.name}}>
+                }
+              </datalist>
             </div>
             <div class="input-group mb-3 w-50">
               <span class="input-group-text">Date</span>
@@ -25,8 +25,8 @@
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Payment Method</span>
-              <select class="form-select" id="inputGroupSelect01">
-                <option value="1">Cash and Bank</option>
+              <select class="form-select" id="inputGroupSelect01" [(ngModel)]="paymentMethod" (change)="loadCashAndBankOfAccounts()">
+                <option value="1" selected>Cash and Bank</option>
                 <option value="2">Credit Card</option>
               </select>
             </div>
@@ -34,7 +34,7 @@
               <span class="input-group-text">Paying Account</span>
               <input type="search" list="pay-accountlist" class="form-control" [(ngModel)]= "payingAccount">
               <datalist id="pay-accountlist">
-                @for (account of cashAndBankAccountList; track $index) {
+                @for (account of payingAccountList; track $index) {
                   <option value={{account.name}}>
                 }
              </datalist>
@@ -45,7 +45,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th></th>
+              <th><input class="form-check-input p-2" type="checkbox" checked disabled></th>
               <th scope="col" class="uw-text-primary">Invoice</th>
               <th scope="col" class="uw-text-primary">Amount Due</th>
               <th scope="col" class="uw-text-primary">Discount</th>
@@ -54,32 +54,28 @@
             </tr>
           </thead>
           <tbody>
+            @if (invoiceList.length==0) {
+              <tr>
+                <td colspan="5">No Invoices to display</td>
+              </tr>
+            }
             @for (invoice of invoiceList; track $index) {
               <tr>
-                @if ($index==0) {
-                  <td><input class="form-check-input p-3" type="checkbox" checked (change)="fillPayingAmount($event)"></td>
-                } @else {
-                  <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
-                }
-                <td><input type="text" class="form-control invoice-no" [value]="invoice.no"></td>
-                <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.value" disabled></td>
+                <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
+                <td><input type="text" class="form-control invoice-no" [value]="invoice.invoiceNo"></td>
+                <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.payableBal" disabled></td>
                 <td><input type="number" class="form-control discount" style="width: 90px;" (change)="fillPayingAmount($event)"></td>
                 <td class="">
                   <div class="d-flex justify-content-between">
                     <div class="col-auto w-75">
-                      <input type="number" class="form-control amount-to-pay" style="width: 120px;" [value]="invoice.value" disabled>
+                      <input type="number" class="form-control amount-to-pay" style="width: 120px;" [value]="invoice.payableBal" disabled>
                     </div>
                   </div>
                 </td>
                 <td class="">
                   <div class="d-flex justify-content-between">
                     <div class="col-auto w-75">
-                      @if ($index==0) {
-                        <!-- set value of the first invoice -->
-                        <input type="number" class="form-control amount-paying" style="width: 120px;" [value]="invoice.value" (change)="calculateTotal($event)">
-                      } @else {
                         <input type="number" class="form-control amount-paying" style="width: 120px;" (change)="calculateTotal($event)">
-                      }
                     </div>
                   </div>
                 </td>

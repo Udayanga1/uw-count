@@ -25,4 +25,9 @@ public class BillController {
     public ResponseEntity<List<Bill>> getAll() {
         return ResponseEntity.ok(service.getAllBills());
     }
+
+    @GetMapping("get-all/{supplier}")
+    public ResponseEntity<List<Bill>> getAllBySupplier(@PathVariable  String supplier) {
+        return ResponseEntity.ok(service.getAllBillsBySupplier(supplier));
+    }
 }

@@ -7,10 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uwcount.dto.Bill;
 import org.uwcount.dto.BillTransaction;
+import org.uwcount.dto.Supplier;
 import org.uwcount.entity.BillEntity;
 import org.uwcount.entity.BillTransactionEntity;
+import org.uwcount.entity.SupplierEntity;
 import org.uwcount.repository.BillRepository;
 import org.uwcount.repository.BillTransactionRepository;
+import org.uwcount.repository.SupplierRepository;
 import org.uwcount.service.BillService;
 
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class BillServiceImpl implements BillService {
 
     private final BillRepository billRepo;
+    private final SupplierRepository supplierRepo;
     private final BillTransactionRepository txRepo;
     private final ModelMapper mapper;
 
@@ -53,6 +57,24 @@ public class BillServiceImpl implements BillService {
                 .stream()
                 .map(be -> mapper.map(be, Bill.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Bill> getAllBillsBySupplier(String supplierName) {
+        Integer supplierId = findSupplierByName(supplierName).getId();
+
+        List<BillEntity> supplierBills = billRepo.findBySupplierId(supplierId);
+        return supplierBills.stream()
+                .map(be -> mapper.map(be, Bill.class))
+                .collect(Collectors.toList());
+    }
+
+    private Supplier findSupplierByName(String name) {
+        SupplierEntity entity = supplierRepo.findByName(name);
+        if (entity == null) {
+            throw new EntityNotFoundException("Supplier '" + name + "' not found");
+        }
+        return mapper.map(entity, Supplier.class);
     }
 
 }

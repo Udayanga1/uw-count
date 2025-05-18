@@ -7,4 +7,6 @@ public interface SupplierRepository extends JpaRepository<SupplierEntity, Intege
     SupplierEntity findByEmail(String email);
 
     SupplierEntity findByContactNo(String contactNo);
+
+    SupplierEntity findByName(String name);
 }

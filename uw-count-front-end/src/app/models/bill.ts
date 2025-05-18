@@ -8,6 +8,7 @@ export interface Bill {
   dueDate: string;
   subTotal: number;
   discount: number;
+  payableBal: number;
   tax: number;
   billTransactions: BillTransaction[];
 }
