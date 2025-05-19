@@ -45,7 +45,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th><input class="form-check-input p-2" type="checkbox" checked disabled></th>
+              <th><input class="ms-2" type="checkbox" checked disabled></th>
               <th scope="col" class="uw-text-primary">Invoice</th>
               <th scope="col" class="uw-text-primary">Amount Due</th>
               <th scope="col" class="uw-text-primary">Discount</th>
@@ -62,6 +62,7 @@
             @for (invoice of invoiceList; track $index) {
               <tr>
                 <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
+                <td class="d-none"><input type="number" class="form-control bill_id" [value]="invoice.id"></td>
                 <td><input type="text" class="form-control invoice-no" [value]="invoice.invoiceNo"></td>
                 <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.payableBal" disabled></td>
                 <td><input type="number" class="form-control discount" style="width: 90px;" (change)="fillPayingAmount($event)"></td>
@@ -84,10 +85,14 @@
           </tbody>
         </table>
         <div class="row ms-auto me-2 w-25">
-          <div class="input-group input-group-sm mb-3">
-            <span class="input-group-tex border-0 bg-white w-50 h5">Total</span>
-            <input type="text" class="form-control border-0 bg-white border-bottom text-end h5 total-pay-bill" disabled id="total-pay-bill" [value]="total">
-          </div>
+
+          @if (invoiceList.length>0) {
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-tex border-0 bg-white w-50 h5">Total</span>
+              <input type="text" class="form-control border-0 bg-white border-bottom text-end h5 total-pay-bill" disabled id="total-pay-bill" [value]="total">
+            </div>
+          }
+
         </div>
 
         <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">

@@ -69,6 +69,22 @@ public class BillServiceImpl implements BillService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Bill updateBillBal(Bill bill) {
+//        billRepo.updateBal(bill.getPayableBal(), bill.getId());
+//        return bill;
+        BillEntity entity = billRepo.findById(bill.getId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Bill not found: " + bill.getId()));
+
+        Double newBal = entity.getPayableBal() - bill.getPayableBal();
+        entity.setPayableBal(newBal);
+
+        BillEntity saved = billRepo.save(entity);
+
+        return mapper.map(saved, Bill.class);
+    }
+
     private Supplier findSupplierByName(String name) {
         SupplierEntity entity = supplierRepo.findByName(name);
         if (entity == null) {

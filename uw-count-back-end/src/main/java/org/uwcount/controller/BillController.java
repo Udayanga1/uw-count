@@ -30,4 +30,10 @@ public class BillController {
     public ResponseEntity<List<Bill>> getAllBySupplier(@PathVariable  String supplier) {
         return ResponseEntity.ok(service.getAllBillsBySupplier(supplier));
     }
+
+    @PutMapping("/update-bal")
+    public ResponseEntity<Bill> update(@RequestBody Bill bill) {
+        Bill updated = service.updateBillBal(bill);
+        return ResponseEntity.ok(updated);
+    }
 }

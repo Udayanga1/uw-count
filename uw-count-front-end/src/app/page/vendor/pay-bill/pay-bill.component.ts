@@ -7,6 +7,7 @@ import { ChartOfAccountsService } from '../../../service/chart-of-accounts.servi
 import { Bill } from '../../../models/bill';
 import { Supplier } from '../../../models/supplier';
 import { SupplierService } from '../../../service/supplier.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-pay-bill',
@@ -33,7 +34,7 @@ export class PayBillComponent implements OnInit, OnDestroy{
 
   total: number = this.invoiceList.length>0 ? this.invoiceList[0].payableBal : 0;
 
-  constructor(private modalService: ModalPayBillService, private coaService: ChartOfAccountsService, private supplierService: SupplierService) {}
+  constructor(private modalService: ModalPayBillService, private coaService: ChartOfAccountsService, private supplierService: SupplierService, private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.subscription = this.modalService.isPayBillsOpen.subscribe(
@@ -61,6 +62,9 @@ export class PayBillComponent implements OnInit, OnDestroy{
 
   closeModal() {
     this.isPayBillsOpen = false;
+    this.supplier = '';
+    this.invoiceList = [];
+    this.total = 0;
   }
 
   fillPayingAmount(event: any): void {
@@ -109,11 +113,26 @@ export class PayBillComponent implements OnInit, OnDestroy{
     const table = currentRow.parentElement.parentElement;
     const totalInput = table.parentElement.querySelector('.total-pay-bill');
 
+    let amountPaying: number = currentRow.querySelector('.amount-paying').value;
+    const amountToPay: number = currentRow.querySelector('.amount-to-pay').value;
+    const invoice: string = currentRow.querySelector('.invoice-no').value;
+
+    if (+amountPaying > +amountToPay) {      
+      alert(`${invoice}: amount paying should equal or lesser than amount to pay`);
+      currentRow.querySelector('.amount-paying').value = amountToPay;
+    }
+
     this.total = 0;
     payingAmountRows.forEach((row: any) => {
       const value = row.value.length>0 ? parseFloat(row.value) : 0;
       this.total+=value;
     })
+
+    if (amountPaying > 0) {
+      currentRow.querySelector('.form-check-input').checked = true;
+    } else {
+      currentRow.querySelector('.form-check-input').checked = false;
+    }
 
     totalInput.value = this.total;
   }
@@ -130,15 +149,39 @@ export class PayBillComponent implements OnInit, OnDestroy{
       alert('Please fill supplier, paying account and at least one line item.');
       return;
     }
-    this.supplier = '';
-    this.invoiceList = [];
-    console.log("Paid");
-    this.closeModal();
+
+    document.querySelectorAll('.form-check-input:checked').forEach(item => {
+      const row = item.closest('tr')!;  // assert it’s non-null
+      const payingAmountInput = row.querySelector<HTMLInputElement>('.amount-paying')!;
+      const discountInput = row.querySelector<HTMLInputElement>('.discount')!;
+      const billId = row.querySelector<HTMLInputElement>('.bill_id')!;
+
+      const paying  = parseFloat(payingAmountInput.value || '0');
+      const discount = parseFloat(discountInput.value    || '0');
+
+      console.log(billId.value + ": bal Red " + (paying + discount));
+
+      this.httpClient.put<Bill>('http://localhost:8080/bill/update-bal', {id: +billId.value, payableBal: (paying + discount)})
+        .subscribe({
+          next: created => {
+            console.log(created);
+            this.closeModal();
+          },
+          error: err => {
+            console.error('Error saving payment', err);
+            alert('Failed to save payment');
+          }
+        });
+      
+    })
+
+    // console.log("Paid");
+    // this.closeModal();
   }
 
   loadCashAndBankOfAccounts(): void {
     this.payingAccountList = [];
-    console.log(this.paymentMethod.valueOf());
+    this.payingAccount = '';
     if(this.paymentMethod.valueOf() == "1" ){
       this.coaService.getAccounts().forEach(row=>{
         row.forEach(item=>{
@@ -162,7 +205,9 @@ export class PayBillComponent implements OnInit, OnDestroy{
   loadSupplierInvoices(supplierName: string): void {
     this.modalService.getSupplierBills(supplierName).forEach(row => {
       row.forEach(invoice => {
-        this.invoiceList.push(invoice)
+        if (invoice.payableBal>0) {
+          this.invoiceList.push(invoice)
+        }
       })
     })
   }
