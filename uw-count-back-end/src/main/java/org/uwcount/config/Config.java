@@ -7,8 +7,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.uwcount.dto.AccountAlternative;
+import org.uwcount.dto.BillPayment;
 import org.uwcount.entity.AccountEntity;
 import org.uwcount.entity.AccountTypesEntity;
+import org.uwcount.entity.BillPaymentEntity;
 import org.uwcount.repository.AccountTypesRepository;
 
 import java.util.HashMap;
@@ -23,6 +25,9 @@ public class Config {
     public ModelMapper getMapper() {
         ModelMapper mapper = new ModelMapper();
 
+        // Skip null values on map
+        mapper.getConfiguration().setSkipNullEnabled(true);
+
         // when mapping AccountEntity → AccountAlternative,
         // use accountEntity.getTypeId().getName() for the DTO's 'type' property
         mapper.typeMap(AccountEntity.class, AccountAlternative.class)
@@ -31,6 +36,12 @@ public class Config {
                         AccountAlternative::setType
                 );
 
+        //    Ensure the transaction‐list property is mapped across
+//        mapper.typeMap(BillPaymentEntity.class, BillPayment.class)
+//                .addMapping(
+//                        BillPaymentEntity::getBillPaymentTransaction,
+//                        BillPayment::setBillPaymentTransaction
+//                );
         return mapper;
     }
 

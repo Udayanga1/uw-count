@@ -1,6 +1,7 @@
 package org.uwcount.service;
 
 import org.uwcount.dto.Bill;
+import org.uwcount.dto.BillPayment;
 
 import java.util.List;
 
@@ -10,4 +11,6 @@ public interface BillService {
     List<Bill> getAllBillsBySupplier(String supplierName);
 
     Bill updateBillBal(Bill bill);
+
+    BillPayment payBills(BillPayment billPayment);
 }

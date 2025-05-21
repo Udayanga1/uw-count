@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.uwcount.dto.Bill;
+import org.uwcount.dto.BillPayment;
 import org.uwcount.service.BillService;
 
 import java.util.List;
@@ -35,5 +36,11 @@ public class BillController {
     public ResponseEntity<Bill> update(@RequestBody Bill bill) {
         Bill updated = service.updateBillBal(bill);
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/pay-bills")
+    public ResponseEntity<BillPayment> payBills(@RequestBody BillPayment billPayment) {
+        BillPayment created = service.payBills(billPayment);
+        return ResponseEntity.ok(created);
     }
 }

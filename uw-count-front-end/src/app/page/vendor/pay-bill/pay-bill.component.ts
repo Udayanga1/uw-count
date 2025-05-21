@@ -8,6 +8,8 @@ import { Bill } from '../../../models/bill';
 import { Supplier } from '../../../models/supplier';
 import { SupplierService } from '../../../service/supplier.service';
 import { HttpClient } from '@angular/common/http';
+import { BillPayment } from '../../../models/bill-pmt';
+import { BillPmtTransaction } from '../../../models/bill-pmt-transaction';
 
 @Component({
   selector: 'app-pay-bill',
@@ -150,6 +152,8 @@ export class PayBillComponent implements OnInit, OnDestroy{
       return;
     }
 
+    const billPmtTransactions: BillPmtTransaction[] = [];
+
     document.querySelectorAll('.form-check-input:checked').forEach(item => {
       const row = item.closest('tr')!;  // assert it’s non-null
       const payingAmountInput = row.querySelector<HTMLInputElement>('.amount-paying')!;
@@ -160,21 +164,37 @@ export class PayBillComponent implements OnInit, OnDestroy{
       const discount = parseFloat(discountInput.value    || '0');
 
       console.log(billId.value + ": bal Red " + (paying + discount));
-
-      this.httpClient.put<Bill>('http://localhost:8080/bill/update-bal', {id: +billId.value, payableBal: (paying + discount)})
-        .subscribe({
-          next: created => {
-            console.log(created);
-            this.closeModal();
-          },
-          error: err => {
-            console.error('Error saving payment', err);
-            alert('Failed to save payment');
-          }
-        });
-      
+      billPmtTransactions.push({
+        id: null,
+        paymentId: null,
+        billId: +billId.value,
+        amountPaying: paying,
+        discountApplied: discount
+      })
     })
 
+    const billPayment: BillPayment = {
+      id: null,
+      date: this.payDate,
+      payingAccountId: 2,
+      total: this.total,
+      billPaymentTransaction: billPmtTransactions
+    };
+
+    console.log(billPayment);
+    
+    
+    this.httpClient.post<Bill>('http://localhost:8080/bill/pay-bills', billPayment)
+      .subscribe({
+        next: created => {
+          console.log(created);
+          this.closeModal();
+        },
+        error: err => {
+          console.error('Error saving payment', err);
+          alert('Failed to save payment');
+        }
+      });
     // console.log("Paid");
     // this.closeModal();
   }
