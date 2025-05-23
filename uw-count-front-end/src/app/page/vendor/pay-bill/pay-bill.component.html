@@ -32,7 +32,7 @@
             </div>
             <div class="input-group mb-3">
               <span class="input-group-text">Paying Account</span>
-              <input type="search" list="pay-accountlist" class="form-control" [(ngModel)]= "payingAccount">
+              <input type="search" list="pay-accountlist" class="form-control" [(ngModel)]= "payingAccount" (change)="setPayingAccountCode()">
               <datalist id="pay-accountlist">
                 @for (account of payingAccountList; track $index) {
                   <option value={{account.name}}>

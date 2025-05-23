@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.uwcount.util.ScheduleType;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @ToString
@@ -25,6 +27,8 @@ public class AccountTransactionEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "schedule_type", nullable = false)
     private ScheduleType scheduleType;
+
+    private LocalDate date;
 
     private Double amount;
 }

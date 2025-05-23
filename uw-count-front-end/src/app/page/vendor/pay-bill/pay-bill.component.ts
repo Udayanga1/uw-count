@@ -28,6 +28,8 @@ export class PayBillComponent implements OnInit, OnDestroy{
   public payingAccount = '';
   public paymentMethod = '1';
 
+  private payingAccountCode: string = '';
+
   invoiceList: Bill[] = [];
 
   payingAccountList:Account[] = [];
@@ -139,6 +141,15 @@ export class PayBillComponent implements OnInit, OnDestroy{
     totalInput.value = this.total;
   }
 
+  setPayingAccountCode() {
+    this.payingAccountList.forEach(account => {
+      if (this.payingAccount == account.name) {
+        this.payingAccountCode = account.code;
+      }
+    })
+    
+  }
+
   payAndNew() {
     this.payAndClose();
     setTimeout(()=>{
@@ -163,7 +174,6 @@ export class PayBillComponent implements OnInit, OnDestroy{
       const paying  = parseFloat(payingAmountInput.value || '0');
       const discount = parseFloat(discountInput.value    || '0');
 
-      console.log(billId.value + ": bal Red " + (paying + discount));
       billPmtTransactions.push({
         id: null,
         paymentId: null,
@@ -176,12 +186,10 @@ export class PayBillComponent implements OnInit, OnDestroy{
     const billPayment: BillPayment = {
       id: null,
       date: this.payDate,
-      payingAccountId: 2,
+      payingAccountId: +this.payingAccountCode,
       total: this.total,
       billPaymentTransaction: billPmtTransactions
     };
-
-    console.log(billPayment);
     
     
     this.httpClient.post<Bill>('http://localhost:8080/bill/pay-bills', billPayment)
@@ -206,7 +214,7 @@ export class PayBillComponent implements OnInit, OnDestroy{
       this.coaService.getAccounts().forEach(row=>{
         row.forEach(item=>{
           if (item.type=="Cash and Bank") {
-            this.payingAccountList.push(item)
+            this.payingAccountList.push(item)            
           }
         })
         

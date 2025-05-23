@@ -24,6 +24,6 @@ public class BillPaymentEntity {
     private LocalDate date;
     private Double total;
 
-    @OneToMany(mappedBy = "billPayment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "billPayment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BillPaymentTransactionEntity> billPaymentTransaction = new ArrayList<>();
 }
