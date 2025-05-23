@@ -9,6 +9,7 @@ import org.uwcount.dto.*;
 import org.uwcount.entity.*;
 import org.uwcount.repository.*;
 import org.uwcount.service.BillService;
+import org.uwcount.util.ScheduleType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,12 @@ public class BillServiceImpl implements BillService {
     private final SupplierRepository supplierRepo;
     private final BillPaymentRepository pmtRepo;
     private final BillPaymentTransactionRepository billPmtTxTepo;
-    private final BillTransactionRepository txRepo;
+    private final AccountTransactionRepository accTxnRepo;
     private final ModelMapper mapper;
+
+    private Integer accountsPayableId = 3100;
+    private Integer discountRecdAccountId = 6100;
+    private Integer taxOnPurchasesId = 1300;
 
     @Override
     @Transactional
@@ -43,6 +48,40 @@ public class BillServiceImpl implements BillService {
         billEntity.setTransactionDetails(txEntities);
 
         BillEntity saved = billRepo.save(billEntity);
+
+        // save bill txns in account txn detail
+        saved.getTransactionDetails()
+                .forEach(billTransaction -> {
+                    AccountTransactionEntity accountTransaction = new AccountTransactionEntity();
+                    accountTransaction.setAccountId(billTransaction.getAccountId());
+                    accountTransaction.setTransactionRef(billTransaction.getId());
+                    accountTransaction.setScheduleType(ScheduleType.BILL);
+                    accountTransaction.setAmount(billTransaction.getAmount());
+                    accTxnRepo.save(accountTransaction);
+                    System.out.println("accountTransaction:57: " + accountTransaction);
+                });
+
+        // save total, discount, and tax in account txn detail
+        AccountTransactionEntity discountTransaction = new AccountTransactionEntity();
+        discountTransaction.setAccountId(discountRecdAccountId);
+        discountTransaction.setTransactionRef(saved.getId());
+        discountTransaction.setScheduleType(ScheduleType.BILL_TOTAL);
+        discountTransaction.setAmount(-saved.getDiscount());
+        accTxnRepo.save(discountTransaction);
+
+        AccountTransactionEntity taxTransaction = new AccountTransactionEntity();
+        taxTransaction.setAccountId(taxOnPurchasesId);
+        taxTransaction.setTransactionRef(saved.getId());
+        taxTransaction.setScheduleType(ScheduleType.BILL_TOTAL);
+        taxTransaction.setAmount(saved.getTax());
+        accTxnRepo.save(taxTransaction);
+
+        AccountTransactionEntity totalTransaction = new AccountTransactionEntity();
+        totalTransaction.setAccountId(accountsPayableId);
+        totalTransaction.setTransactionRef(saved.getId());
+        totalTransaction.setScheduleType(ScheduleType.BILL_TOTAL);
+        totalTransaction.setAmount(-(saved.getSubTotal()-saved.getDiscount()+saved.getTax()));
+        accTxnRepo.save(totalTransaction);
 
         return mapper.map(saved, Bill.class);
     }

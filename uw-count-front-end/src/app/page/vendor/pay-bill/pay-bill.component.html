@@ -63,7 +63,7 @@
               <tr>
                 <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
                 <td class="d-none"><input type="number" class="form-control bill_id" [value]="invoice.id"></td>
-                <td><input type="text" class="form-control invoice-no" [value]="invoice.invoiceNo"></td>
+                <td><input type="text" class="form-control invoice-no" [value]="invoice.invoiceNo" disabled></td>
                 <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.payableBal" disabled></td>
                 <td><input type="number" class="form-control discount" style="width: 90px;" (change)="fillPayingAmount($event)"></td>
                 <td class="">
