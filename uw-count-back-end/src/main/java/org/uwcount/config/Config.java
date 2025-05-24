@@ -32,7 +32,7 @@ public class Config {
         // use accountEntity.getTypeId().getName() for the DTO's 'type' property
         mapper.typeMap(AccountEntity.class, AccountAlternative.class)
                 .addMapping(
-                        src -> src.getTypeId().getName(),
+                        src -> src.getAccountType().getName(),
                         AccountAlternative::setType
                 );
 

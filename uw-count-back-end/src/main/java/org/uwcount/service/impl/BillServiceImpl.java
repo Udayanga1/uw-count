@@ -69,7 +69,9 @@ public class BillServiceImpl implements BillService {
         discountTransaction.setScheduleType(ScheduleType.BILL_TOTAL);
         discountTransaction.setDate(saved.getDate());
         discountTransaction.setAmount(-saved.getDiscount());
-        accTxnRepo.save(discountTransaction);
+        if (saved.getDiscount() != 0) {
+            accTxnRepo.save(discountTransaction);
+        }
 
         AccountTransactionEntity taxTransaction = new AccountTransactionEntity();
         taxTransaction.setAccountId(taxOnPurchasesId);
@@ -77,7 +79,9 @@ public class BillServiceImpl implements BillService {
         taxTransaction.setScheduleType(ScheduleType.BILL_TOTAL);
         taxTransaction.setDate(saved.getDate());
         taxTransaction.setAmount(saved.getTax());
-        accTxnRepo.save(taxTransaction);
+        if (saved.getTax() != 0){
+            accTxnRepo.save(taxTransaction);
+        }
 
         AccountTransactionEntity totalTransaction = new AccountTransactionEntity();
         totalTransaction.setAccountId(accountsPayableId);
@@ -159,8 +163,6 @@ public class BillServiceImpl implements BillService {
         // Add pmt bill txns to bill pmt
         saveBillPmt.setBillPaymentTransaction(addedBillPaymentTransactions);
 
-
-        System.out.println("discount: 164: "+ discount);
         // Save discount transaction
         AccountTransactionEntity discountTxn = new AccountTransactionEntity();
         discountTxn.setTransactionRef(saveBillPmt.getId());
@@ -168,7 +170,9 @@ public class BillServiceImpl implements BillService {
         discountTxn.setDate(saveBillPmt.getDate());
         discountTxn.setAmount(-discount);
         discountTxn.setAccountId(discountRecdAccountId);
-        accTxnRepo.save(discountTxn);
+        if (discount != 0) {
+            accTxnRepo.save(discountTxn);
+        }
 
         // Save paying account transaction
         AccountTransactionEntity payingTxn = new AccountTransactionEntity();

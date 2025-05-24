@@ -21,5 +21,5 @@ public class AccountEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", nullable = false)
-    private AccountTypesEntity typeId;
+    private AccountTypesEntity accountType;
 }
