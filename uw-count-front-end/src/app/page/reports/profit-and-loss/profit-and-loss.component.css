@@ -1,0 +1,31 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+input {
+  border-color: #cf24ad48;
+}
+
+table tr td {
+  color: rgb(56, 56, 56);
+}
+
+table tr td.uw-text-primary {
+  color: #24AECF;
+  font-weight: 500;
+}
+
+hr {
+  margin: 0;
+  /* color:rgb(56, 56, 56); */
+}
+
+table tr td:nth-child(2) {
+  width: 20px;
+  text-align: end;
+}
+

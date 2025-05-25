@@ -19,6 +19,7 @@ public class ReportController {
 
     @PostMapping("/pl")
     public ResponseEntity<List<PLReportLine>> createProfitAndLoss(@RequestBody StartDateAndEndDate startDateAndEndDate){
+        System.out.println("startDateAndEndDate: 22: " + startDateAndEndDate);
         List<PLReportLine> pLReportLineCreated = service.createProfitAndLoss(startDateAndEndDate);
         return ResponseEntity.ok(pLReportLineCreated);
     }

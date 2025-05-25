@@ -5,6 +5,7 @@ import { ModalCreateInvoiceService } from '../../service/modal-create-invoice.se
 import { ModalReceivePaymentService } from '../../service/modal-receive-payment.service';
 import { SupplierService } from '../../service/supplier.service';
 import { ChartOfAccountsService } from '../../service/chart-of-accounts.service';
+import { ReportsService } from '../../service/reports.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -14,7 +15,7 @@ import { ChartOfAccountsService } from '../../service/chart-of-accounts.service'
 })
 export class NavBarComponent {
 
-  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService, private createInvoiceService: ModalCreateInvoiceService, private receivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService) {}
+  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService, private createInvoiceService: ModalCreateInvoiceService, private receivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService, private reportService: ReportsService) {}
   
   openEnterBillModal(): void {
     this.enterBillModalService.isEnterBillsOpen.emit(true);    
@@ -38,6 +39,10 @@ export class NavBarComponent {
 
   openChartOfAccountsModal(): void {
     this.chartOfAccountsService.isChartOfAccountsOpen.emit(true);
+  }
+
+  openProfitAndLoss(): void {
+    this.reportService.isProfitAndLossOpen.emit(true);
   }
 
 }

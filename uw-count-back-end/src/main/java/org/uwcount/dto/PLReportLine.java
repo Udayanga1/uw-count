@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class PLReportLine {
     private String accName;
-    private Integer accountType;
+    private String accountType;
     private Double amount;
 }
