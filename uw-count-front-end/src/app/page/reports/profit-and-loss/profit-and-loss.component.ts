@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ReportsService } from '../../../service/reports.service';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { PLLine } from '../../../models/profit-and-loss-line';
+import { FSLine } from '../../../models/f-s-line';
 
 @Component({
   selector: 'app-profit-and-loss',
@@ -17,10 +17,10 @@ export class ProfitAndLossComponent implements OnInit, OnDestroy {
 
   public isProfitAndLossOpen: boolean = true;
 
-  public revenueList: PLLine[] = [];
-  public otherRevenueList: PLLine[] = [];
-  public expenseList: PLLine[] = [];
-  public otherExpenseList: PLLine[] = [];
+  public revenueList: FSLine[] = [];
+  public otherRevenueList: FSLine[] = [];
+  public expenseList: FSLine[] = [];
+  public otherExpenseList: FSLine[] = [];
 
   public revenue: number = 0;
   public otherRevenue: number = 0;
@@ -41,7 +41,6 @@ export class ProfitAndLossComponent implements OnInit, OnDestroy {
         this.isProfitAndLossOpen = isProfitAndLossOpen;
       }
     )
-
     this.retrievePLData();
   }
 
@@ -71,7 +70,7 @@ export class ProfitAndLossComponent implements OnInit, OnDestroy {
       endDate: this.filter.endDate
     };
 
-    this.http.post<PLLine[]>('http://localhost:8080/report/pl', body)
+    this.http.post<FSLine[]>('http://localhost:8080/report/pl', body)
       .subscribe(data => {
         data.forEach(row => {
           console.log('PL Data item :', row);

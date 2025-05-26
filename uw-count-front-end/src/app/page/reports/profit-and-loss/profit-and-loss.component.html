@@ -46,8 +46,8 @@
             }
             @if (revenueList.length>0) {
               <tr>
-                <td class="uw-text-primary"></td>
-                <td class="uw-text-primary"><hr>{{revenue}}<hr></td>
+                <td ></td>
+                <td class="h6"><hr>{{revenue}}<hr></td>
               </tr>
             }
 
@@ -59,8 +59,8 @@
             }
             @if (otherRevenueList.length > 0) {
               <tr>
-                <td class="uw-text-primary"></td>
-                <td class="uw-text-primary"><hr>{{otherRevenue}}<hr></td>
+                <td ></td>
+                <td class="h6"><hr>{{otherRevenue}}<hr></td>
               </tr>
             }
 
@@ -72,8 +72,8 @@
             }
             @if (expenseList.length > 0) {
               <tr>
-                <td class="uw-text-primary"></td>
-                <td class="uw-text-primary"><hr>{{expense}}<hr></td>
+                <td ></td>
+                <td class="h6"><hr>{{expense}}<hr></td>
               </tr>
             }
 
@@ -85,14 +85,14 @@
             }
             @if (otherExpenseList.length > 0) {
               <tr>
-                <td class="uw-text-primary"></td>
-                <td class="uw-text-primary"><hr>{{otherExpense}}<hr></td>
+                <td ></td>
+                <td class="h6"><hr>{{otherExpense}}<hr></td>
               </tr>
             }
             @if (revenueList.length > 0 || otherRevenueList.length > 0 || expenseList.length > 0|| otherExpenseList.length > 0) {
               <tr>
-                <td class="uw-text-primary">Net Profit</td>
-                <td class="uw-text-primary">{{-netProfit}}</td>
+                <td class="h5">Net Profit</td>
+                <td class="h5">{{-netProfit}}</td>
               </tr>
             } @else {
               <td class="uw-text-primary">No records to show</td>

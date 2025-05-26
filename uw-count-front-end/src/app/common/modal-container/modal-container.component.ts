@@ -14,10 +14,11 @@ import { ChartOfAccountsService } from '../../service/chart-of-accounts.service'
 import { ChartOfAccountsComponent } from "../../page/company/chart-of-accounts/chart-of-accounts.component";
 import { ProfitAndLossComponent } from "../../page/reports/profit-and-loss/profit-and-loss.component";
 import { ReportsService } from '../../service/reports.service';
+import { BalanceSheetComponent } from '../../page/reports/balance-sheet/balance-sheet.component';
 
 @Component({
   selector: 'app-modal-container',
-  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent, ChartOfAccountsComponent, ProfitAndLossComponent],
+  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent, ChartOfAccountsComponent, ProfitAndLossComponent, BalanceSheetComponent],
   templateUrl: './modal-container.component.html',
   styleUrl: './modal-container.component.css'
 })
@@ -32,6 +33,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   isAddSupplier: boolean = false;
   isChartOfAccountsOpen: boolean = false;
   isProfitAndLossOpen: boolean = false;
+  isBalanceSheetOpen: boolean = false;
   
   
   private enterBillSubscription!: Subscription;
@@ -41,6 +43,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   private addSupplierSubscription!: Subscription;
   private chartOfAccountsSubscription!: Subscription;
   private profitAndLossSubscription!: Subscription;
+  private balanceSheetSubscription!: Subscription;
 
 
   constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService, private reportService: ReportsService) {}
@@ -79,9 +82,14 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
     );
     this.profitAndLossSubscription = this.reportService.isProfitAndLossOpen.subscribe(
       (isProfitAndLossOpen: boolean) => {
-        this.isProfitAndLossOpen = isProfitAndLossOpen
+        this.isProfitAndLossOpen = isProfitAndLossOpen;
       }
-    )
+    );
+    this.balanceSheetSubscription = this.reportService.isBalanceSheetOpen.subscribe(
+      (isBalanceSheetOpen: boolean) => {
+        this.isBalanceSheetOpen = isBalanceSheetOpen;
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -93,6 +101,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
     this.addSupplierSubscription.unsubscribe();
     this.chartOfAccountsSubscription.unsubscribe();
     this.profitAndLossSubscription.unsubscribe();
+    this.balanceSheetSubscription.unsubscribe();
   }
 
 

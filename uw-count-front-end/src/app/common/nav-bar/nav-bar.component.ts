@@ -45,4 +45,8 @@ export class NavBarComponent {
     this.reportService.isProfitAndLossOpen.emit(true);
   }
 
+  openBalanceSheet(): void {
+    this.reportService.isBalanceSheetOpen.emit(true);
+  }
+
 }

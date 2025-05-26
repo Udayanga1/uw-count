@@ -20,4 +20,11 @@ public interface AccountTransactionRepository extends JpaRepository<AccountTrans
         """, nativeQuery = true)
     List<AccountTransactionSummary> findTotalAmountByAccountBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    @Query(value = """
+        SELECT account_id AS accountId, SUM(amount) AS totalAmount 
+        FROM account_transaction_detail 
+        WHERE date <= :reportDate 
+        GROUP BY account_id
+        """, nativeQuery = true)
+    List<AccountTransactionSummary> findBalanceByAccountAtDate(@Param("reportDate") LocalDate reportDate);
 }

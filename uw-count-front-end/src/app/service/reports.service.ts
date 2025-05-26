@@ -8,4 +8,6 @@ export class ReportsService {
   constructor() { }
 
   isProfitAndLossOpen = new EventEmitter<boolean>();
+
+  isBalanceSheetOpen = new EventEmitter<boolean>();
 }
