@@ -1,0 +1,110 @@
+@if (isProfitAndLossOpen) {
+  <div class="position-static d-block p-4" style="max-width: 700px;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-4 shadow p-3 bg-white">
+        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+          <h1 class="modal-title fs-5 uw-text-primary">Profit and Loss Statement</h1>
+          <button type="button" class="btn-close" (click)="closeReport()" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-2 mb-4 filter-buttons align-items-center uw-text-secondary">
+          <div class="col-auto mb-3">
+            <label class="form-label px-2 mt-3" ><h6>Start Date</h6></label>
+          </div>
+          <div class="col-auto mb-3">
+            <input 
+              type="date" 
+              placeholder="Start Date" 
+              class="form-control uw-text-secondary"
+              [(ngModel)]="filter.startDate"
+              (change)="retrievePLData()"
+            />
+          </div>
+          <div class="col-auto mb-3">
+            <label class="form-label px-2 mt-3" ><h6>End Date</h6></label>
+          </div>
+          <div class="col-auto mb-3">
+            <input 
+              type="date" 
+              placeholder="Start Date" 
+              class="form-control uw-text-secondary"
+              [(ngModel)]="filter.endDate"
+              (change)="retrievePLData()"
+            />
+          </div>
+        </div>
+
+        <table class="table table-borderless">
+          <thead>
+          </thead>
+          <tbody>
+            @for (row of revenueList; track $index) {
+              <tr>
+                <td>{{row.accName}}</td>
+                <td>{{-row.amount}}</td>
+              </tr>        
+            }
+            @if (revenueList.length>0) {
+              <tr>
+                <td ></td>
+                <td class="h6"><hr>{{revenue}}<hr></td>
+              </tr>
+            }
+
+            @for (row of otherRevenueList; track $index) {
+              <tr>
+                <td>{{row.accName}}</td>
+                <td>{{-row.amount}}</td>
+              </tr>   
+            }
+            @if (otherRevenueList.length > 0) {
+              <tr>
+                <td ></td>
+                <td class="h6"><hr>{{otherRevenue}}<hr></td>
+              </tr>
+            }
+
+            @for (row of expenseList; track $index) {
+              <tr>
+                <td>{{row.accName}}</td>
+                <td>{{-row.amount}}</td>
+              </tr>   
+            }
+            @if (expenseList.length > 0) {
+              <tr>
+                <td ></td>
+                <td class="h6"><hr>{{expense}}<hr></td>
+              </tr>
+            }
+
+            @for (row of otherExpenseList; track $index) {
+              <tr>
+                <td>{{row.accName}}</td>
+                <td>{{-row.amount}}</td>
+              </tr>   
+            }
+            @if (otherExpenseList.length > 0) {
+              <tr>
+                <td ></td>
+                <td class="h6"><hr>{{otherExpense}}<hr></td>
+              </tr>
+            }
+            @if (revenueList.length > 0 || otherRevenueList.length > 0 || expenseList.length > 0|| otherExpenseList.length > 0) {
+              <tr>
+                <td class="h5">Net Profit</td>
+                <td class="h5">{{-netProfit}}</td>
+              </tr>
+            } @else {
+              <td class="uw-text-primary">No records to show</td>
+            }
+          </tbody>
+        </table>
+
+        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeReport()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

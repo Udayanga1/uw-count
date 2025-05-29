@@ -5,6 +5,7 @@ import { ModalCreateInvoiceService } from '../../service/modal-create-invoice.se
 import { ModalReceivePaymentService } from '../../service/modal-receive-payment.service';
 import { SupplierService } from '../../service/supplier.service';
 import { ChartOfAccountsService } from '../../service/chart-of-accounts.service';
+import { ReportsService } from '../../service/reports.service';
 import { JournalEntryService } from '../../service/journal-entry.service';
 
 @Component({
@@ -15,9 +16,7 @@ import { JournalEntryService } from '../../service/journal-entry.service';
 })
 export class NavBarComponent {
 
-  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService, private createInvoiceService: ModalCreateInvoiceService, private receivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService,
-    private jEService: JournalEntryService
-  ) {}
+  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService, private createInvoiceService: ModalCreateInvoiceService, private receivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService, private reportService: ReportsService, private jEService: JournalEntryService) {}
   
   openEnterBillModal(): void {
     this.enterBillModalService.isEnterBillsOpen.emit(true);    
@@ -43,7 +42,12 @@ export class NavBarComponent {
     this.chartOfAccountsService.isChartOfAccountsOpen.emit(true);
   }
 
+  openProfitAndLoss(): void {
+    this.reportService.isProfitAndLossOpen.emit(true);
+  }
 
+  openBalanceSheet(): void {
+    this.reportService.isBalanceSheetOpen.emit(true);
 
   openJournalEntry(): void {
     this.jEService.isJournalEntryOpen.emit(true);

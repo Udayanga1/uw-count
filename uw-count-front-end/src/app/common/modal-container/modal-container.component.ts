@@ -12,12 +12,15 @@ import { AddVendorComponent } from "../../page/vendor/add-vendor/add-vendor.comp
 import { SupplierService } from '../../service/supplier.service';
 import { ChartOfAccountsService } from '../../service/chart-of-accounts.service';
 import { ChartOfAccountsComponent } from "../../page/company/chart-of-accounts/chart-of-accounts.component";
+import { ProfitAndLossComponent } from "../../page/reports/profit-and-loss/profit-and-loss.component";
+import { ReportsService } from '../../service/reports.service';
+import { BalanceSheetComponent } from '../../page/reports/balance-sheet/balance-sheet.component';
 import { JournalEntryService } from '../../service/journal-entry.service';
 import { JournalEntryComponent } from "../../page/company/journal-entry/journal-entry.component";
 
 @Component({
   selector: 'app-modal-container',
-  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent, ChartOfAccountsComponent, JournalEntryComponent],
+  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent, ChartOfAccountsComponent, ProfitAndLossComponent, BalanceSheetComponent, JournalEntryComponent],
   templateUrl: './modal-container.component.html',
   styleUrl: './modal-container.component.css'
 })
@@ -31,6 +34,8 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   isReceivePaymentOpen: boolean = false;
   isAddSupplier: boolean = false;
   isChartOfAccountsOpen: boolean = false;
+  isProfitAndLossOpen: boolean = false;
+  isBalanceSheetOpen: boolean = false;
   isJournalEntryOpen: boolean = false;
   
   private enterBillSubscription!: Subscription;
@@ -39,14 +44,11 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   private receivePaymentSubscription!: Subscription;
   private addSupplierSubscription!: Subscription;
   private chartOfAccountsSubscription!: Subscription;
-
-
+  private profitAndLossSubscription!: Subscription;
+  private balanceSheetSubscription!: Subscription;
   private journalEntrySubscription!: Subscription;
 
-
-  constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService,
-    private jeService: JournalEntryService
-  ) {}
+  constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService, private reportService: ReportsService, private jeService: JournalEntryService) {}
 
   ngOnInit(): void {
     // Subscribe to modal state changes
@@ -80,10 +82,16 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
         this.isChartOfAccountsOpen = isChartOfAccountsOpen;
       }
     );
-
-
-
-
+    this.profitAndLossSubscription = this.reportService.isProfitAndLossOpen.subscribe(
+      (isProfitAndLossOpen: boolean) => {
+        this.isProfitAndLossOpen = isProfitAndLossOpen;
+      }
+    );
+    this.balanceSheetSubscription = this.reportService.isBalanceSheetOpen.subscribe(
+      (isBalanceSheetOpen: boolean) => {
+        this.isBalanceSheetOpen = isBalanceSheetOpen;
+      }
+    );
     this.journalEntrySubscription = this.jeService.isJournalEntryOpen.subscribe(
       (isJournalEntryOpen: boolean) => {
         this.isJournalEntryOpen = isJournalEntryOpen;
@@ -99,11 +107,8 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
     this.receivePaymentSubscription.unsubscribe();
     this.addSupplierSubscription.unsubscribe();
     this.chartOfAccountsSubscription.unsubscribe();
-
-
+    this.profitAndLossSubscription.unsubscribe();
+    this.balanceSheetSubscription.unsubscribe();
     this.journalEntrySubscription.unsubscribe();
   }
-
-
-
 }

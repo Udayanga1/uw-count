@@ -33,13 +33,15 @@
     </div>
   }
 
+  @if (isBalanceSheetOpen) {
+    <div class="position-absolute top-0 start-0">
+      <app-balance-sheet />
+    </div>
+  }
 
-
-
-  @if (isJournalEntryOpen) {
+ @if (isJournalEntryOpen) {
     <div class="position-absolute top-0 start-0">
       <app-journal-entry />
     </div>
   }
-
 </div>

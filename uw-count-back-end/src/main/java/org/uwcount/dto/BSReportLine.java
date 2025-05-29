@@ -1,13 +1,15 @@
 package org.uwcount.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class PLReportLine {
+public class BSReportLine {
     private String accName;
     private String accountType;
     private Double amount;
