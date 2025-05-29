@@ -12,10 +12,12 @@ import { AddVendorComponent } from "../../page/vendor/add-vendor/add-vendor.comp
 import { SupplierService } from '../../service/supplier.service';
 import { ChartOfAccountsService } from '../../service/chart-of-accounts.service';
 import { ChartOfAccountsComponent } from "../../page/company/chart-of-accounts/chart-of-accounts.component";
+import { JournalEntryService } from '../../service/journal-entry.service';
+import { JournalEntryComponent } from "../../page/company/journal-entry/journal-entry.component";
 
 @Component({
   selector: 'app-modal-container',
-  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent, ChartOfAccountsComponent],
+  imports: [EnterBillComponent, PayBillComponent, CreateInvoiceComponent, ReceivePaymentComponent, AddVendorComponent, ChartOfAccountsComponent, JournalEntryComponent],
   templateUrl: './modal-container.component.html',
   styleUrl: './modal-container.component.css'
 })
@@ -29,6 +31,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   isReceivePaymentOpen: boolean = false;
   isAddSupplier: boolean = false;
   isChartOfAccountsOpen: boolean = false;
+  isJournalEntryOpen: boolean = false;
   
   private enterBillSubscription!: Subscription;
   private payBillSubscription!: Subscription;
@@ -38,7 +41,12 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
   private chartOfAccountsSubscription!: Subscription;
 
 
-  constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService) {}
+  private journalEntrySubscription!: Subscription;
+
+
+  constructor(private modalEnterBillService: ModalEnterBillService, private modalPayBillService: ModalPayBillService, private modalCreateInvoiceService: ModalCreateInvoiceService, private modalReceivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService,
+    private jeService: JournalEntryService
+  ) {}
 
   ngOnInit(): void {
     // Subscribe to modal state changes
@@ -72,6 +80,15 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
         this.isChartOfAccountsOpen = isChartOfAccountsOpen;
       }
     );
+
+
+
+
+    this.journalEntrySubscription = this.jeService.isJournalEntryOpen.subscribe(
+      (isJournalEntryOpen: boolean) => {
+        this.isJournalEntryOpen = isJournalEntryOpen;
+      }
+    )
   }
 
   ngOnDestroy(): void {
@@ -82,6 +99,9 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
     this.receivePaymentSubscription.unsubscribe();
     this.addSupplierSubscription.unsubscribe();
     this.chartOfAccountsSubscription.unsubscribe();
+
+
+    this.journalEntrySubscription.unsubscribe();
   }
 
 
