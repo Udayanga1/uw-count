@@ -33,6 +33,12 @@
     </div>
   }
 
+  @if (isProfitAndLossOpen) {
+    <div class="position-absolute top-0 start-0">
+      <app-profit-and-loss />
+    </div>
+  }
+  
   @if (isBalanceSheetOpen) {
     <div class="position-absolute top-0 start-0">
       <app-balance-sheet />

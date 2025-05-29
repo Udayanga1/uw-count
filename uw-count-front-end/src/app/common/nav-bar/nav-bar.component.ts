@@ -48,9 +48,11 @@ export class NavBarComponent {
 
   openBalanceSheet(): void {
     this.reportService.isBalanceSheetOpen.emit(true);
+  }
 
   openJournalEntry(): void {
     this.jEService.isJournalEntryOpen.emit(true);
   }
 
 }
+
