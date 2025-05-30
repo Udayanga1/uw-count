@@ -1,10 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { JournalEntryService } from '../../../service/journal-entry.service';
+import { FormsModule } from '@angular/forms';
+import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
+import { Journal } from '../../../models/journal';
 
 @Component({
   selector: 'app-journal-entry',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './journal-entry.component.html',
   styleUrl: './journal-entry.component.css'
 })
@@ -14,11 +17,20 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
 
   private subscription!: Subscription;
 
-  public total:number = 0;
+  public date: string = new Date().toISOString().substring(0, 10);
+
+  public narration: string = '';
+
+  public isEmptyAccount: boolean = false;
+
+  public debitTotal: number = 0;
+  public creditTotal: number = 0;
 
   public modifiedAccountList:String[] = [];
 
-  constructor(private jEService: JournalEntryService) {}
+  private journalLines: Journal[] = [];
+
+  constructor(private jEService: JournalEntryService, private coaService: ChartOfAccountsService) {}
 
   ngOnInit(): void {
     this.subscription = this.jEService.isJournalEntryOpen.subscribe(
@@ -26,6 +38,8 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
         this.isJournalEntryOpen = isJournalEntryOpen;
       }
     )
+
+    this.loadChartOfAccounts();
   }
 
   ngOnDestroy(): void {
@@ -38,16 +52,51 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
   
   saveAndClose() {
 
+    this.journalLines = [];
+
+    const accountInputs = document.querySelectorAll('.account');
+
+    accountInputs.forEach((accountInput: any) => {
+      if (accountInput?.value?.length > 0) {
+        const row = accountInput.closest('tr');
+
+        const debitInput = row.querySelector('.debit');
+        const creditInput = row.querySelector('.credit');
+        const descriptionInput = row.querySelector('.description');
+
+        const debitValue = debitInput?.value ? +debitInput.value : 0;
+        const creditValue = creditInput?.value ? +creditInput.value : 0;
+
+        const amount = debitValue > 0 ? debitValue : -creditValue;
+
+        console.log("debitValue: " + debitInput + " creditValue: " + creditInput);
+        
+
+        this.journalLines.push({
+          narration: this.narration,
+          date: this.date,
+          accountCode: +accountInput.value.split(' ')[0],
+          amount: amount,
+          description: descriptionInput?.value || ''
+        });
+      }
+    });
+
+    console.log(this.journalLines);
+    
+    this.closeJournalEntry();
+
   }
 
   saveAndNew(){
-
+    this.saveAndClose();
+    // this.isJournalEntryOpen = true;
   }
 
 
   addRow(event: any): void{
 
-    this.calAmount(event);
+    // this.calTotals(event);
     
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement
@@ -66,17 +115,24 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
       // Rebind event
       const accountInput = newRow.querySelector('input[list="accountlist"]');
       const removeButton = newRow.querySelector('button');
-      const unitPrice = newRow.querySelector('.unit-price');
-      const quantity = newRow.querySelector('.quantity');
+      const debitAmount = newRow.querySelector('.debit');
+      const creditAmount = newRow.querySelector('.credit');
       if (accountInput) {
         accountInput.addEventListener('change', this.addRow.bind(this));
         removeButton?.addEventListener('click', this.removeRow.bind(this));
-        unitPrice?.addEventListener('change', this.calAmount.bind(this));
-        quantity?.addEventListener('change', this.calAmount.bind(this));
+        debitAmount?.addEventListener('change', this.calTotals.bind(this));
+        creditAmount?.addEventListener('change', this.calTotals.bind(this));
       }
 
       tbody.insertBefore(newRow, tbody.querySelector('datalist'));
     }
+
+    if (!this.modifiedAccountList.includes(event.target.value)) {
+      alert(`${event.target.value} does not exist in Chart of Accounts`);
+      event.target.value='';
+    }
+
+    this.calTotals(event);
   }
 
   removeRow(event: any): void {
@@ -84,9 +140,7 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
     const tbody = currentRow.parentElement;
     
     const tableChildElementCount = tbody.children.length;
-    console.log(tableChildElementCount);
     
-    // console.log(tbody.children.length);
     if (tableChildElementCount==2) {
         Array.from(currentRow.querySelectorAll('input')).forEach(input => {
         (input as HTMLInputElement).value = '';
@@ -95,48 +149,66 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
       currentRow.classList.add('remove');
       tbody.removeChild(tbody.querySelector('.remove'));
     }
-
-    // this.recalculateTotals();
     
   }
   
-  calAmount(event: any): void {
+  calTotals(event: any): void {
+
+    if (event.target.value < 0) {
+      alert("Negative value is not allowed!");
+      event.target.value = 0;
+      return;
+    }
+
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement;
     
-    const unitPriceInput = currentRow.querySelector('.unit-price');
-    const quantityInput = currentRow.querySelector('.quantity');
-    const amount = currentRow.querySelector('.amount');
+    const debit = currentRow.querySelector('.debit');
+    const credit = currentRow.querySelector('.credit');
     const account = currentRow.querySelector('.account');
-    const totalRowAmounts = tbody.querySelectorAll('.amount');
+    const totalDebitAmounts = tbody.querySelectorAll('.debit');
+    const totalCreditAmounts = tbody.querySelectorAll('.credit');
 
-    const unitPrice = parseFloat(unitPriceInput?.value || '0');
-    const quantity = parseFloat(quantityInput?.value || '0');
+    const debitAmount = parseFloat(debit?.value || '0');
+    const creditAmount = parseFloat(credit?.value || '0');
 
-    const rowAmount = account.value.length>0 ? unitPrice * quantity : 0;
+    if(event.target.classList.contains('debit') && creditAmount > 0) {
+      currentRow.querySelector('.credit').value = '';
+    }
+    if(event.target.classList.contains('credit') && debitAmount > 0) {
+      currentRow.querySelector('.debit').value = '';
+    }
 
-    amount.value = rowAmount ? rowAmount : 0;
+    this.isEmptyAccount = false;
     
-    // this.subTotal = 0;
-    // totalRowAmounts.forEach((amount: any)=>{
-    //   const value = amount.value.length>0 ? parseFloat(amount.value) : 0;
-    //   this.subTotal+= value;
-    // })
-    // this.total = Number(this.subTotal) - Number(this.discount) + Number(this.tax);        
+    this.debitTotal = 0;
+    this.creditTotal = 0;
+    totalDebitAmounts.forEach((amount: any)=>{
+      const value = amount.value.length>0 ? parseFloat(amount.value) : 0;
+      this.debitTotal+= value;
+      if (value>0 && amount.closest('tr').querySelector('.account').value.length == 0) {
+        this.isEmptyAccount = true;
+      }
+      
+    });
+
+    totalCreditAmounts.forEach((amount: any)=>{
+      const value = amount.value.length>0 ? parseFloat(amount.value) : 0;
+      this.creditTotal+= value;
+      if (value>0 && amount.closest('tr').querySelector('.account').value.length == 0) {
+        this.isEmptyAccount = true;
+      }
+    });
+    
   }
 
-  // recalculateTotals(): void {
-  //   const tbody = document.querySelector('table tbody');
-  //   let newSubTotal = 0;
-    
-  //   const totalRowAmounts = tbody?.querySelectorAll('.amount') || [];
-  //   totalRowAmounts.forEach((amount: any) => {
-  //     const value = amount.value.length > 0 ? parseFloat(amount.value) : 0;
-  //     newSubTotal += value;
-  //   });
-    
-  //   this.subTotal = newSubTotal;
-  //   this.total = this.subTotal - this.discount + +this.tax;
-  // }
+  loadChartOfAccounts(): void {
+    this.coaService.getAccounts().forEach(row=>{
+      row.forEach(item=>{
+        this.modifiedAccountList.push(item.code + " " + item.name)
+      })
+      
+    })
+  }
 
 }
