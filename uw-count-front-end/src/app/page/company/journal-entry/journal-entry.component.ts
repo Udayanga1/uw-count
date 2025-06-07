@@ -4,6 +4,8 @@ import { JournalEntryService } from '../../../service/journal-entry.service';
 import { FormsModule } from '@angular/forms';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 import { Journal } from '../../../models/journal';
+import { HttpClient } from '@angular/common/http';
+import { JournalLine } from '../../../models/journal-line';
 
 @Component({
   selector: 'app-journal-entry',
@@ -28,9 +30,9 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
 
   public modifiedAccountList:String[] = [];
 
-  private journalLines: Journal[] = [];
+  private journalLines: JournalLine[] = [];
 
-  constructor(private jEService: JournalEntryService, private coaService: ChartOfAccountsService) {}
+  constructor(private jEService: JournalEntryService, private coaService: ChartOfAccountsService, private httpClient: HttpClient) {}
 
   ngOnInit(): void {
     this.subscription = this.jEService.isJournalEntryOpen.subscribe(
@@ -47,6 +49,10 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
   }
 
   closeJournalEntry() {
+    this.narration = '';
+    this.date = new Date().toISOString().substring(0, 10);
+    this.debitTotal = 0;
+    this.creditTotal = 0;
     this.isJournalEntryOpen = false;
   }
   
@@ -70,22 +76,34 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
         const amount = debitValue > 0 ? debitValue : -creditValue;
 
         console.log("debitValue: " + debitInput + " creditValue: " + creditInput);
-        
 
         this.journalLines.push({
-          narration: this.narration,
-          date: this.date,
           accountCode: +accountInput.value.split(' ')[0],
           amount: amount,
           description: descriptionInput?.value || ''
         });
+
       }
     });
-
-    console.log(this.journalLines);
     
-    this.closeJournalEntry();
+    const je: Journal = {
+      narration: this.narration,
+      date: this.date,
+      jeLines: this.journalLines
+    }
 
+    console.log(je);
+
+    this.httpClient.post<Journal>('http://localhost:8080/je/add', je)
+      .subscribe({
+        next: created => {
+          this.closeJournalEntry();;
+        },
+        error: err => {
+          console.error('Error saving journal entry', err);
+          alert('Failed to save journal entry');
+        }
+      });
   }
 
   saveAndNew(){
@@ -100,6 +118,7 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
     
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement
+    
 
     const nextRow = currentRow.nextElementSibling;
 
@@ -114,7 +133,7 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
 
       // Rebind event
       const accountInput = newRow.querySelector('input[list="accountlist"]');
-      const removeButton = newRow.querySelector('button');
+      const removeButton = newRow.querySelector('.btn-close');
       const debitAmount = newRow.querySelector('.debit');
       const creditAmount = newRow.querySelector('.credit');
       if (accountInput) {
@@ -138,6 +157,9 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
   removeRow(event: any): void {
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement;
+
+    console.log(currentRow);
+    
     
     const tableChildElementCount = tbody.children.length;
     
@@ -149,6 +171,31 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
       currentRow.classList.add('remove');
       tbody.removeChild(tbody.querySelector('.remove'));
     }
+
+    // cal totals after remove row
+    const totalDebitAmounts = document.querySelectorAll('.debit');
+    const totalCreditAmounts = document.querySelectorAll('.credit');
+
+    this.isEmptyAccount = false;
+    
+    this.debitTotal = 0;
+    this.creditTotal = 0;
+    totalDebitAmounts.forEach((amount: any)=>{
+      const value = amount.value.length>0 ? parseFloat(amount.value) : 0;
+      this.debitTotal+= value;
+      if (value>0 && amount.closest('tr').querySelector('.account').value.length == 0) {
+        this.isEmptyAccount = true;
+      }
+      
+    });
+
+    totalCreditAmounts.forEach((amount: any)=>{
+      const value = amount.value.length>0 ? parseFloat(amount.value) : 0;
+      this.creditTotal+= value;
+      if (value>0 && amount.closest('tr').querySelector('.account').value.length == 0) {
+        this.isEmptyAccount = true;
+      }
+    });
     
   }
   
@@ -165,7 +212,7 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
     
     const debit = currentRow.querySelector('.debit');
     const credit = currentRow.querySelector('.credit');
-    const account = currentRow.querySelector('.account');
+    // const account = currentRow.querySelector('.account');
     const totalDebitAmounts = tbody.querySelectorAll('.debit');
     const totalCreditAmounts = tbody.querySelectorAll('.credit');
 
