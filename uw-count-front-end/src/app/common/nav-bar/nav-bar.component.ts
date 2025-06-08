@@ -7,6 +7,7 @@ import { SupplierService } from '../../service/supplier.service';
 import { ChartOfAccountsService } from '../../service/chart-of-accounts.service';
 import { ReportsService } from '../../service/reports.service';
 import { JournalEntryService } from '../../service/journal-entry.service';
+import { ProductService } from '../../service/product.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -16,7 +17,7 @@ import { JournalEntryService } from '../../service/journal-entry.service';
 })
 export class NavBarComponent {
 
-  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService, private createInvoiceService: ModalCreateInvoiceService, private receivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService, private reportService: ReportsService, private jEService: JournalEntryService) {}
+  constructor(private enterBillModalService: ModalEnterBillService, private payBillModalService: ModalPayBillService, private createInvoiceService: ModalCreateInvoiceService, private receivePaymentService: ModalReceivePaymentService, private supplierService: SupplierService, private chartOfAccountsService: ChartOfAccountsService, private reportService: ReportsService, private jEService: JournalEntryService, private productService: ProductService) {}
   
   openEnterBillModal(): void {
     this.enterBillModalService.isEnterBillsOpen.emit(true);    
@@ -52,6 +53,10 @@ export class NavBarComponent {
 
   openJournalEntry(): void {
     this.jEService.isJournalEntryOpen.emit(true);
+  }
+
+  openProducts(): void {
+    this.productService.isProductsOpen.emit(true);
   }
 
 }

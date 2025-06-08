@@ -1,0 +1,95 @@
+@if (isProductsOpen) {
+  <div class="position-static d-block p-4" style="max-width: 1000px;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content rounded-4 shadow p-3 bg-white">
+        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+          <h1 class="modal-title fs-5 uw-text-primary">Products</h1>
+          <button type="button" class="btn-close" (click)="closeProducts()" aria-label="Close"></button>
+        </div>
+
+        @if(showAddForm) {
+          <div class="border p-3 rounded mb-1">
+            <div class="row g-2">
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Code"
+                       [(ngModel)]="newProduct.code" />
+              </div>
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Name"
+                       [(ngModel)]="newProduct.name" />
+              </div>
+              <div class="col">
+                <select class="form-select" [(ngModel)]="newProduct.accountCode">
+                    <option disabled>Account</option>
+                    @for (account of incomeAccountList; track $index) {
+                      <option value={{account.code}}>{{account.code + " " + account.name}}</option>
+                    }
+                </select>
+              </div>
+              <div class="col">
+                <input type="number" class="form-control text-end" placeholder="Unit Price"
+                       [(ngModel)]="newProduct.unitPrice" />
+              </div>
+              <div class="col-auto d-flex gap-1">
+                <button class="btn" id="btn-save-new-product" (click)="addProduct()" [disabled]="!newProduct.code || !newProduct.name || newProduct.accountCode=='Account'">
+                  Save
+                </button>
+                <button class="btn btn-outline-secondary" (click)="showAddForm = false; resetNew()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="my-2 d-flex align-items-center gap-2">
+          <button class="btn add-new-product" (click)="showAddForm = true">
+            + Add New Product
+          </button>
+        </div>
+
+        <div class="d-flex gap-2 my-3">
+          <input type="text"
+                 class="form-control"
+                 placeholder="Filter by code, name or type"
+                 [(ngModel)]="filterText" />
+  
+          <select class="form-select" [(ngModel)]="sortField">
+            <option value="code">Code</option>
+            <option value="name">Name</option>
+            <option value="type">Account</option>
+          </select>
+  
+          <button class="btn btn-outline-secondary"
+                  (click)="sortDirection = (sortDirection === 'asc' ? 'desc' : 'asc')">
+            {{ sortDirection === 'asc' ? '▲' : '▼' }}
+          </button>
+        </div>
+
+        <!-- <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="uw-text-secondary">Code</th>
+              <th scope="col" class="uw-text-secondary">Name</th>
+              <th scope="col" class="uw-text-secondary">Type</th>
+            </tr>
+            @for (account of displayedAccounts; track $index) {
+              <tr>
+                <td>{{account.code}}</td>
+                <td>{{account.name}}</td>
+                <td>{{account.type}}</td>
+              </tr>
+            }
+          </thead>
+          <tbody>        
+          </tbody>
+        </table> -->
+
+        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeProducts()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

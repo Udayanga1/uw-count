@@ -1,0 +1,28 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+.add-new-product {
+  background-color: white;
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+.add-new-product:hover {
+  background-color: #24AECF;
+  color: white;
+}
+
+#btn-save-new-product {
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+#btn-save-new-product:hover {
+  background-color: #24AECF;
+  color: white;
+}
