@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.uwcount.dto.Product;
 import org.uwcount.service.ProductService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -17,5 +19,10 @@ public class ProductController {
     public ResponseEntity<Product> add(@RequestBody Product product) {
         Product created = service.addProduct(product);
         return ResponseEntity.ok(created);
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<Product>> getAll() {
+        return ResponseEntity.ok(service.getAllProducts());
     }
 }

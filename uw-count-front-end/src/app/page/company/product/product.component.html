@@ -19,7 +19,7 @@
                        [(ngModel)]="newProduct.name" />
               </div>
               <div class="col">
-                <select class="form-select" [(ngModel)]="newProduct.accountCode">
+                <select class="form-select" [(ngModel)]="newProduct.accountId">
                     <option disabled>Account</option>
                     @for (account of incomeAccountList; track $index) {
                       <option value={{account.code}}>{{account.code + " " + account.name}}</option>
@@ -31,7 +31,7 @@
                        [(ngModel)]="newProduct.unitPrice" />
               </div>
               <div class="col-auto d-flex gap-1">
-                <button class="btn" id="btn-save-new-product" (click)="addProduct()" [disabled]="!newProduct.code || !newProduct.name || newProduct.accountCode=='Account'">
+                <button class="btn" id="btn-save-new-product" (click)="addProduct()" [disabled]="!newProduct.code || !newProduct.name || newProduct.accountId=='Account'">
                   Save
                 </button>
                 <button class="btn btn-outline-secondary" (click)="showAddForm = false; resetNew()">
@@ -48,7 +48,7 @@
           </button>
         </div>
 
-        <div class="d-flex gap-2 my-3">
+        <div class="d-flex gap-2 my-3 filters">
           <input type="text"
                  class="form-control"
                  placeholder="Filter by code, name or type"
@@ -57,7 +57,7 @@
           <select class="form-select" [(ngModel)]="sortField">
             <option value="code">Code</option>
             <option value="name">Name</option>
-            <option value="type">Account</option>
+            <option value="accountId">Account Code</option>
           </select>
   
           <button class="btn btn-outline-secondary"
@@ -66,24 +66,26 @@
           </button>
         </div>
 
-        <!-- <table class="table">
+        <table class="table">
           <thead>
             <tr>
               <th scope="col" class="uw-text-secondary">Code</th>
               <th scope="col" class="uw-text-secondary">Name</th>
-              <th scope="col" class="uw-text-secondary">Type</th>
+              <th scope="col" class="uw-text-secondary">Account Code</th>
+              <th scope="col" class="uw-text-secondary text-end">Unit Price</th>
             </tr>
-            @for (account of displayedAccounts; track $index) {
+            @for (product of displayedProducts; track $index) {
               <tr>
-                <td>{{account.code}}</td>
-                <td>{{account.name}}</td>
-                <td>{{account.type}}</td>
+                <td>{{product.code}}</td>
+                <td>{{product.name}}</td>
+                <td class="text-center">{{product.accountId}}</td>
+                <td class="text-end">{{product.unitPrice}}</td>
               </tr>
             }
           </thead>
           <tbody>        
           </tbody>
-        </table> -->
+        </table>
 
         <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
           <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeProducts()">Cancel</button>

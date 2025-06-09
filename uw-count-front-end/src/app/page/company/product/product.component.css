@@ -26,3 +26,15 @@
   background-color: #24AECF;
   color: white;
 }
+
+table {
+  max-width: 480px;
+}
+
+.filters {
+  max-width: 480px;
+}
+
+.filters > select {
+  width: 35%;
+}

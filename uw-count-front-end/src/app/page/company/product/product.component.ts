@@ -5,9 +5,8 @@ import { Product } from '../../../models/product';
 import { FormsModule } from '@angular/forms';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 import { Account } from '../../../models/account';
-import { HttpClient } from '@angular/common/http';
 
-type SortField = 'code' | 'name' | 'accountCode';
+type SortField = 'code' | 'name' | 'accountId';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
@@ -21,12 +20,13 @@ export class ProductComponent implements OnInit, OnDestroy{
   isProductsOpen: boolean = true;
   private subscription!: Subscription;
   private accountListSubscription!: Subscription;
+  private productListSubscription!: Subscription;
 
   showAddForm = false;
   newProduct: Product = {
     code: '',
     name: '',
-    accountCode: 'Account',
+    accountId: 'Account',
   }
 
   filterText = '';
@@ -35,7 +35,9 @@ export class ProductComponent implements OnInit, OnDestroy{
 
   incomeAccountList: Account[] = [];
 
-  constructor(private productService: ProductService, private coaService: ChartOfAccountsService, private http: HttpClient) {}
+  productList: Product[] = [];
+
+  constructor(private productService: ProductService, private coaService: ChartOfAccountsService) {}
 
   ngOnInit(): void {
     this.subscription = this.productService.isProductsOpen.subscribe(
@@ -53,6 +55,12 @@ export class ProductComponent implements OnInit, OnDestroy{
           }
         })
       });
+
+    this.productListSubscription = this.productService.getProducts().subscribe(list => {
+      this.productList = list
+      console.log(this.productList);
+    });
+    
   }
   
   ngOnDestroy(): void {
@@ -64,19 +72,21 @@ export class ProductComponent implements OnInit, OnDestroy{
   }
 
   addProduct() {
-    const data: any = {
+    const data: Product = {
       code: this.newProduct.code,
       name: this.newProduct.name,
-      accountId: this.newProduct.accountCode,
+      accountId: this.newProduct.accountId,
       unitPrice: this.newProduct.unitPrice
     }
 
-    console.log(data);
-    this.http.post<any>('http://localhost:8080/product/add', data)
+    this.productService.addProduct(data)
       .subscribe({
         next: created => {
-          console.log(created);
-          this.resetNew();
+          this.productService.getProducts()
+            .subscribe(list => {
+              this.productList = list;
+              this.resetNew();
+            })
         },
         error: err => {
           console.log('Error creating product', err);
@@ -87,11 +97,27 @@ export class ProductComponent implements OnInit, OnDestroy{
     
   }
 
+  get displayedProducts(): Product[] {
+    const filtered = this.productList.filter(a => {
+      const txt = this.filterText.toLowerCase();
+      return a.code.toLowerCase().includes(txt) 
+          || a.name.toLowerCase().includes(txt)
+          || ('' + a.accountId).toLowerCase().includes(txt);
+    });
+
+    return filtered.sort((a, b) => {
+      const aVal = ('' + a[this.sortField]).toLowerCase();
+      const bVal = ('' + b[this.sortField]).toLowerCase();
+      const cmp = aVal.localeCompare(bVal);
+      return this.sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }
+
   resetNew() {
     this.newProduct = {
       code: '',
       name: '',
-      accountCode: 'Account',
+      accountId: 'Account',
       unitPrice: 0
     }
   }
