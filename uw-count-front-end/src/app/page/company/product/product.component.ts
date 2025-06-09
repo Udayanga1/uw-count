@@ -58,7 +58,6 @@ export class ProductComponent implements OnInit, OnDestroy{
 
     this.productListSubscription = this.productService.getProducts().subscribe(list => {
       this.productList = list
-      console.log(this.productList);
     });
     
   }

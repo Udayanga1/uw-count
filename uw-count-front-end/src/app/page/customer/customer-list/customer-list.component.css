@@ -1,0 +1,37 @@
+.uw-text-primary {
+  color: #24AECF;
+}
+
+.uw-text-secondary {
+  color: #CF24AE;
+}
+
+.add-new-customer {
+  background-color: white;
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+.add-new-customer:hover {
+  background-color: #24AECF;
+  color: white;
+}
+
+#btn-save-new-customer {
+  border-color: #24AECF;
+  color: #24AECF;
+}
+
+#btn-save-new-customer:hover {
+  background-color: #24AECF;
+  color: white;
+}
+
+table td {
+  vertical-align:text-top;
+}
+
+table td {
+  max-width: 200px;
+  overflow-wrap: break-word;
+}

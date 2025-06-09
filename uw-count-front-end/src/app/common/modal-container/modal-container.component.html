@@ -56,4 +56,10 @@
       <app-product />
     </div>
   }
+
+ @if (isCustomerOpen) {
+    <div class="position-absolute top-0 start-0">
+      <app-customer-list />
+    </div>
+  }
 </div>
