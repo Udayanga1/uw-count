@@ -27,4 +27,11 @@ public class CustomerController {
     public ResponseEntity<List<Customer>> getAll() {
         return ResponseEntity.ok(service.getAllCustomers());
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<Customer> update(@RequestBody Customer customer) {
+        Customer updated = service.updateCustomer(customer);
+        return ResponseEntity.ok(updated);
+    }
+
 }

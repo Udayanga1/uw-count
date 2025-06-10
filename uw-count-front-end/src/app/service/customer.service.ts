@@ -21,4 +21,8 @@ export class CustomerService {
   getCustomers(): Observable<Customer[]> {
     return this.http.get<any>(`${this.baseUrl}/get-all`);
   }
+
+  updateCustomer(data: Customer): Observable<Customer> {
+    return this.http.put<Customer>(`${this.baseUrl}/update`, data);
+  }
 }

@@ -26,6 +26,9 @@ export class CustomerListComponent implements OnInit, OnDestroy{
     contactNo: ''
   }
 
+  showEditCustomerForm = false;
+  selectedCustomer: Customer = { ...this.newCustomer }
+
   private customerList: Customer[] = [];
 
   filterText = '';
@@ -53,6 +56,8 @@ export class CustomerListComponent implements OnInit, OnDestroy{
 
   closeCustomers() {
     this.isCustomersOpen = false;
+    this.showAddForm = false;
+    this.showEditCustomerForm = false;
   }
 
   addCustomer() {
@@ -100,6 +105,41 @@ export class CustomerListComponent implements OnInit, OnDestroy{
 
   resetNew() {
     this.newCustomer = {
+      name: '',
+      email: '',
+      address: '',
+      contactNo: ''
+    }
+  }
+
+  showEditCustomer(customer: Customer){
+    this.showEditCustomerForm = true;
+    this.selectedCustomer = { ...customer };
+  }
+
+  editCustomer() {
+    console.log(this.selectedCustomer);
+    this.service.updateCustomer(this.selectedCustomer)
+      .subscribe({
+        next: updated => {
+          this.service.getCustomers()
+          .subscribe(list => {
+            this.customerList = list;
+            this.closeEditForm();
+          })
+        },
+        error: err => {
+          console.log('Error updating the customer', err);
+          alert('Failed to update customer')
+        }
+      });
+    
+  }
+
+  closeEditForm() {
+    this.showEditCustomerForm = false;
+    this.selectedCustomer = {
+      id: 0,
       name: '',
       email: '',
       address: '',

@@ -38,6 +38,42 @@
           </div>
         }
 
+        @if (showEditCustomerForm) {
+          <div class="edit-form">
+            <h2 class="fs-5 mx-2 my-3 uw-text-secondary">Edit Customer</h2>
+            <div class="border p-3 rounded m-2">
+              <div class="row g-2">
+                <div class="col">
+                  <input type="text" class="form-control" placeholder="Name"
+                        [(ngModel)]="selectedCustomer.name" />
+                  <input type="text" class="d-none"
+                        [(ngModel)]="selectedCustomer.id" />
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control" placeholder="Email"
+                        [(ngModel)]="selectedCustomer.email" />
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control" placeholder="Telephone"
+                        [(ngModel)]="selectedCustomer.contactNo" />
+                </div>
+                <div class="col">
+                  <input type="text" class="form-control" placeholder="Address"
+                        [(ngModel)]="selectedCustomer.address" />
+                </div>
+                <div class="col-auto d-flex gap-1">
+                  <button class="btn" id="btn-edit-customer" (click)="editCustomer()" [disabled]="!selectedCustomer.name">
+                    Save Changes
+                  </button>
+                  <button class="btn btn-outline-secondary" (click)="showAddForm = false; closeEditForm()">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
         <div class="my-2 d-flex align-items-center gap-2">
           <button class="btn add-new-customer" (click)="showAddForm = true">
             + Add New Customer
@@ -51,9 +87,10 @@
                  [(ngModel)]="filterText" />
   
           <select class="form-select" [(ngModel)]="sortField">
-            <option value="code">Code</option>
             <option value="name">Name</option>
-            <option value="accountId">Account Code</option>
+            <option value="email">Email</option>
+            <option value="contactNo">Telephone</option>
+            <option value="address">Address</option>
           </select>
   
           <button class="btn btn-outline-secondary"
@@ -78,6 +115,9 @@
                 <td class="text-center">{{customer.contactNo}}</td>
                 <td>{{customer.address}}</td>
                 <td class="text-end">{{customer.balanceReceivable}}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm edit-btn" (click)="showEditCustomer(customer)">Edit</button>
+                </td>
               </tr>
             }
           </thead>

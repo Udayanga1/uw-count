@@ -22,6 +22,11 @@
   color: #24AECF;
 }
 
+#btn-edit-customer {
+  border-color: #CF24AE;
+  color: #CF24AE;
+}
+
 #btn-save-new-customer:hover {
   background-color: #24AECF;
   color: white;
@@ -34,4 +39,22 @@ table td {
 table td {
   max-width: 200px;
   overflow-wrap: break-word;
+}
+
+.edit-btn {
+  background-color: #CF24AE;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #24AECF;
+}
+
+.edit-form {
+  position: fixed;
+  top: 250px;
+  padding-top: 10px;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 2px 4px 8px 0 rgba(0, 0, 0, 0.2), 3px 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
