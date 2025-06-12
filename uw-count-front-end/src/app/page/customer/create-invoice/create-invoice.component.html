@@ -10,11 +10,11 @@
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Customer</span>
-              <input type="search" list="customerlist" class="form-control" [(ngModel)]="customer" placeholder="Select or type customer">
+              <input type="search" list="customerlist" class="form-control" [(ngModel)]="customerInput" placeholder="Select or type customer">
               <datalist id="customerlist">
-                <option value="Customer 1">
-                <option value="Customer 2">
-                <option value="Customer 3">
+                @for (customer of customerList; track $index) {
+                  <option value={{customer}}>
+                }
              </datalist>
             </div>
             <div class="input-group mb-3 w-50">
@@ -25,7 +25,7 @@
           <div class="d-flex justify-content-between gap-4">
             <div class="input-group mb-3">
               <span class="input-group-text">Invoice #</span>
-              <input type="text" class="form-control" disabled [(ngModel)]="invoiceNo">
+              <input type="text" class="form-control" [(ngModel)]="invoiceNo">
             </div>
             <div class="input-group mb-3 w-50">
               <span class="input-group-text">Due</span>
@@ -62,9 +62,9 @@
               </td>
             </tr>
             <datalist id="productlist">
-                <option value="Product 1">
-                <option value="Product 2">
-                <option value="Product 3">
+              @for (product of productNameList; track $index) {
+                <option value={{product}}>
+              }
              </datalist>
             
           </tbody>

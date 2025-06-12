@@ -27,6 +27,7 @@ export class ProductComponent implements OnInit, OnDestroy{
     code: '',
     name: '',
     accountId: 'Account',
+    unitPrice: 0
   }
 
   filterText = '';

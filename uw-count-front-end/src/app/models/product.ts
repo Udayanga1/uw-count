@@ -3,5 +3,5 @@ export interface Product {
   code: string;
   name: string;
   accountId: string;
-  unitPrice?: number;
+  unitPrice: number;
 }

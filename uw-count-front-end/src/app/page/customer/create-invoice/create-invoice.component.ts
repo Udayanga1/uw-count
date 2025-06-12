@@ -2,9 +2,12 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ModalCreateInvoiceService } from '../../../service/modal-create-invoice.service';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { InvoiceLine } from '../../../models/invoice-line';
 import { Invoice } from '../../../models/invoice';
+import { Customer } from '../../../models/customer';
+import { CustomerService } from '../../../service/customer.service';
+import { ProductService } from '../../../service/product.service';
+import { Product } from '../../../models/product';
 
 @Component({
   selector: 'app-create-invoice',
@@ -14,28 +17,31 @@ import { Invoice } from '../../../models/invoice';
 })
 export class CreateInvoiceComponent implements OnInit, OnDestroy {
 
-  isCreateInvoiceOpen: boolean = true;
+  public isCreateInvoiceOpen: boolean = true;
   private subscription!: Subscription;
   
-  private creditPeriod: number = 14;
-  private taxRate: number = 0.1;
-
-  private http = inject(HttpClient);
+  private readonly creditPeriod: number = 14;
+  private readonly taxRate: number = 0.1;
 
   public subTotal: number = 0;
   public total: number = 0;
   public discount: number = 0;
   public tax: number = 0;
   
-  invoiceDate: string ='';
-  dueDate: string ='';
-  customer: string   = ''; 
-  invoiceNo: string  = '';
+  public invoiceDate: string ='';
+  public dueDate: string ='';
+  public invoiceNo: string  = '';
+
+  public customerInput: string   = '';
+
+  public customerList: string[] = [];
+  public productNameList: string[] = [];
+  private productList: Product[] = [];
   
-  constructor(private modalService: ModalCreateInvoiceService, private httpClient: HttpClient) {}
+  constructor(private readonly service: ModalCreateInvoiceService, private readonly customerService: CustomerService, private readonly productService: ProductService) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isCreateInvoiceOpen.subscribe(
+    this.subscription = this.service.isCreateInvoiceOpen.subscribe(
       (isCreateInvoiceOpen: boolean) => {
         this.isCreateInvoiceOpen = isCreateInvoiceOpen;
       } 
@@ -47,6 +53,21 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
 
     this.invoiceDate = today.toISOString().split('T')[0];
     this.dueDate = due.toISOString().split('T')[0];
+
+    this.customerService.getCustomers().subscribe(list => {
+      list.forEach( customer => {
+        this.customerList.push('' + customer.id + ' : ' + customer.name);
+      })
+    });
+
+    this.productService.getProducts().subscribe(list => {
+      list.forEach(product => {
+        this.productNameList.push('' + product.id + ' : ' + product.name);
+        this.productList.push(product);
+      })
+    })
+
+    
   }
 
   ngOnDestroy(): void {
@@ -64,6 +85,18 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
   addRow(event: any): void{
     const currentRow = event.target.closest('tr');
     const tbody = currentRow.parentElement
+
+    const productId = event.target.value.split(' ')[0];
+    
+    let productRate: number = 0;
+
+    this.productList.forEach(product => {
+      if(product.id == productId) {
+        productRate = product.unitPrice;
+      }
+    })
+
+    currentRow.querySelector('.unit-price').value = productRate;
 
     const nextRow = currentRow.nextElementSibling;
 
@@ -170,9 +203,7 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
   }
 
   saveAndClose(): void {
-    // console.log("save invoice");
-    // this.closeModal();
-    if (!this.customer || this.total <= 0) {
+    if (!this.customerInput || this.total <= 0) {
       alert('Please select a customer and add at least one line item.');
       return;
     }
@@ -205,8 +236,8 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
 
     const invoice: Invoice = {
       id:           null,
-      customerId:   +this.customer.replace(/\D/g,''), // parse out numeric ID
-      invoiceNo:    "25",
+      customerId:   +this.customerInput.split(' ')[0],
+      invoiceNo:    this.invoiceNo,
       date:         this.invoiceDate,
       dueDate:      this.dueDate,
       subTotal:     this.subTotal,
@@ -216,11 +247,11 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
       invoiceLines: lines
     };
 
-    console.log('Posting invoice:', invoice);
-
-    this.http.post<Invoice>('http://localhost:8080/invoice/add', invoice)
+    this.service.addInvoice(invoice)
       .subscribe({
         next: () => {
+          // console.log("selectedCustomer: " + this.selectedCustomer);
+          
           this.closeModal();
         },
         error: err => {
@@ -228,8 +259,6 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
           alert('Could not save invoice. See console for details.');
         }
       });
-
-
   }
 
   saveAndNew(): void {
@@ -238,4 +267,5 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
       this.isCreateInvoiceOpen = true;
     }, 10);
   }
+
 }
