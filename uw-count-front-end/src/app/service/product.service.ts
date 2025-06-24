@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Product } from '../models/product';
 import { Observable } from 'rxjs';
 
@@ -8,11 +8,9 @@ import { Observable } from 'rxjs';
 })
 export class ProductService {
 
-  private baseUrl: string = 'http://localhost:8080/product'
+  private readonly baseUrl: string = 'http://localhost:8080/product'
 
-  constructor(private http: HttpClient) {}
-
-  isProductsOpen = new EventEmitter<boolean>();
+  constructor(private readonly http: HttpClient) {}
 
   addProduct(data: Product): Observable<Product>{
     return this.http.post<Product>(`${this.baseUrl}/add`, data);

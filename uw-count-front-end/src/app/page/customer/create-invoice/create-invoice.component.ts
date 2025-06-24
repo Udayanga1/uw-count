@@ -1,24 +1,20 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ModalCreateInvoiceService } from '../../../service/modal-create-invoice.service';
+import { Component, OnInit } from '@angular/core';
+import { InvoiceService } from '../../../service/invoice.service';
 import { FormsModule } from '@angular/forms';
 import { InvoiceLine } from '../../../models/invoice-line';
 import { Invoice } from '../../../models/invoice';
-import { Customer } from '../../../models/customer';
 import { CustomerService } from '../../../service/customer.service';
 import { ProductService } from '../../../service/product.service';
 import { Product } from '../../../models/product';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-create-invoice',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './create-invoice.component.html',
   styleUrl: './create-invoice.component.css'
 })
-export class CreateInvoiceComponent implements OnInit, OnDestroy {
-
-  public isCreateInvoiceOpen: boolean = true;
-  private subscription!: Subscription;
+export class CreateInvoiceComponent implements OnInit {
   
   private readonly creditPeriod: number = 14;
   private readonly taxRate: number = 0.1;
@@ -36,17 +32,11 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
 
   public customerList: string[] = [];
   public productNameList: string[] = [];
-  private productList: Product[] = [];
+  private readonly productList: Product[] = [];
   
-  constructor(private readonly service: ModalCreateInvoiceService, private readonly customerService: CustomerService, private readonly productService: ProductService) {}
+  constructor(private readonly service: InvoiceService, private readonly customerService: CustomerService, private readonly productService: ProductService, private readonly router: Router) {}
 
-  ngOnInit(): void {
-    this.subscription = this.service.isCreateInvoiceOpen.subscribe(
-      (isCreateInvoiceOpen: boolean) => {
-        this.isCreateInvoiceOpen = isCreateInvoiceOpen;
-      } 
-    );   
-
+  ngOnInit(): void { 
     const today = new Date();
     const due = new Date();
     due.setDate(today.getDate() + this.creditPeriod);
@@ -66,20 +56,6 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
         this.productList.push(product);
       })
     })
-
-    
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeModal(): void {
-    this.isCreateInvoiceOpen = false;
-    this.subTotal = 0;
-    this.discount = 0;
-    this.tax = 0;
-    this.total = 0; 
   }
 
   addRow(event: any): void{
@@ -223,7 +199,7 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
       if (prodInput.value && +amtInput.value > 0) {
         lines.push({
           id:          null,
-          productId:   2,
+          productId:   +prodInput.value.split(' ')[0],
           description: descInput.value,
           rate:        +rateInput.value,
           quantity:    +qtyInput.value,
@@ -250,9 +226,7 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
     this.service.addInvoice(invoice)
       .subscribe({
         next: () => {
-          // console.log("selectedCustomer: " + this.selectedCustomer);
-          
-          this.closeModal();
+          this.router.navigate(['/']);
         },
         error: err => {
           console.error('Failed to save invoice', err);
@@ -263,9 +237,9 @@ export class CreateInvoiceComponent implements OnInit, OnDestroy {
 
   saveAndNew(): void {
     this.saveAndClose();
-    setTimeout(()=>{
-      this.isCreateInvoiceOpen = true;
-    }, 10);
+    setTimeout(() => {
+      this.router.navigate(['customers/create-invoice']);
+    }, 200);
   }
 
 }

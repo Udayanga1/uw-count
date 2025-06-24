@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Account } from '../models/account';
 import { map, Observable } from 'rxjs';
 
@@ -8,15 +8,12 @@ import { map, Observable } from 'rxjs';
 })
 export class ChartOfAccountsService {
 
-  private url = 'http://localhost:8080/account/get-all-alternative';
+  private baseUrl = 'http://localhost:8080/account';
 
   constructor(private http: HttpClient) {}
 
-
-  isChartOfAccountsOpen = new EventEmitter<boolean>();
-
   getAccounts(): Observable<Account[]> {
-    return this.http.get<any[]>(this.url).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}/get-all-alternative`).pipe(
       map(data =>
         data.map(a => ({
           code: a.accountCode.toString(),
@@ -25,6 +22,10 @@ export class ChartOfAccountsService {
         }))
       )
     );
+  }
+
+  addAccount(data: Account): Observable<Account> {
+    return this.http.post<Account>(`${this.baseUrl}/add`, data);
   }
 
 }

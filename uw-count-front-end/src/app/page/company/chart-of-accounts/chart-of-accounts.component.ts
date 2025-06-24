@@ -1,24 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
-import { HttpClient } from '@angular/common/http';
 import { Account } from '../../../models/account';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 type SortField = 'code' | 'name' | 'type';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
   selector: 'app-chart-of-accounts',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './chart-of-accounts.component.html',
   styleUrl: './chart-of-accounts.component.css'
 })
 
-export class ChartOfAccountsComponent implements OnInit, OnDestroy {
+export class ChartOfAccountsComponent implements OnInit {
 
-  isChartOfAccountsOpen: boolean = true;
-  private subscription!: Subscription;
   private accountListSubscription!: Subscription;
 
   accountList: Account[] = [];
@@ -30,26 +28,12 @@ export class ChartOfAccountsComponent implements OnInit, OnDestroy {
   showAddForm = false;
   newAccount: Account = { code: '', name: '', type: 'Type' };
 
-  constructor(private modalService: ChartOfAccountsService, private httpClient: HttpClient) {}
+  constructor(private readonly service: ChartOfAccountsService) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isChartOfAccountsOpen.subscribe(
-      (isChartOfAccountsOpen: boolean) => {
-        this.isChartOfAccountsOpen = isChartOfAccountsOpen;
-      } 
-    );
-
-    this.accountListSubscription = this.modalService.getAccounts()
+    this.accountListSubscription = this.service.getAccounts()
       .subscribe(list => this.accountList = list);
     
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeModal() {
-    this.isChartOfAccountsOpen = false;
   }
 
   get displayedAccounts(): Account[] {
@@ -81,10 +65,10 @@ export class ChartOfAccountsComponent implements OnInit, OnDestroy {
         typeId: this.newAccount.type
     }
 
-    this.httpClient.post<any>('http://localhost:8080/account/add', data)
+    this.service.addAccount(data)
       .subscribe({
         next: created => {
-          this.modalService.getAccounts()
+          this.service.getAccounts()
             .subscribe(list => {
               this.accountList = list;
               this.resetNew();

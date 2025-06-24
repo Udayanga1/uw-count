@@ -1,47 +1,28 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ModalEnterBillService } from '../../../service/modal-enter-bill.service';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Supplier } from '../../../models/supplier';
-import { HttpClient } from '@angular/common/http';
 import { SupplierService } from '../../../service/supplier.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-add-vendor',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './add-vendor.component.html',
   styleUrl: './add-vendor.component.css'
 })
-export class AddVendorComponent implements OnInit, OnDestroy {
-  public isAddSupplierOpen = false;
-
+export class AddVendorComponent implements OnInit {
   public supplierName    = '';
   public supplierEmail   = '';
   public supplierTel     = '';
   public supplierAddress = '';
 
-  private subscription!: Subscription;
-
-  constructor(private supplierService: SupplierService , private httpClient: HttpClient) {}
+  constructor(private readonly service: SupplierService , private readonly router: Router) {}
 
   ngOnInit(): void {
-    this.subscription = this.supplierService.isAddSupplierOpen
-      .subscribe((isOpen: boolean) => {
-        this.isAddSupplierOpen = isOpen;
-
-        if (isOpen) {
-          this.supplierName = this.supplierService.supplierName;
-
-          this.supplierEmail   = '';
-          this.supplierTel     = '';
-          this.supplierAddress = '';
-        }
-      });
-    
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.supplierName = this.service.supplierName;
+    this.supplierEmail   = '';
+    this.supplierTel     = '';
+    this.supplierAddress = '';
   }
 
   addSupplier(): void {
@@ -54,10 +35,10 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       balancePayable: 0
     };
 
-    this.httpClient.post<Supplier>('http://localhost:8080/supplier/add', supplier)
+    this.service.addSupplier(supplier)
       .subscribe({
         next: created => {
-          this.closeModal();
+          this.router.navigate(['/']);         
         },
         error: err => {
           console.error('Error creating bill', err);
@@ -66,28 +47,11 @@ export class AddVendorComponent implements OnInit, OnDestroy {
       });
   }
 
-  closeModal(): void {
-    this.supplierName    = '';
-    this.supplierAddress = '';
-    this.supplierEmail   = '';
-    this.supplierTel     = '';
-    this.isAddSupplierOpen = false;
-    this.supplierService.supplierName = '';
-
-    this.supplierService.loadSuppliers().subscribe(suppliers => {
-      this.supplierService.supplierList = suppliers;
-    })
-  }
-
   checkEmailAvailability(): void {
-    this.httpClient.get<Supplier>(`http://localhost:8080/supplier/search/email/${this.supplierEmail}`, {observe: 'response'}).subscribe(res => {
-      alert("this email is registered with " + res.body?.name);
-    })
+    this.service.checkEmail(this.supplierEmail);
   }
   
   checkContactNoAvailability(): void {
-    this.httpClient.get<Supplier>(`http://localhost:8080/supplier/search/contact/${this.supplierTel}`, {observe: 'response'}).subscribe(res => {
-      alert("this contact no. is registered with " + res.body?.name);
-    })
+    this.service.checkContactNo(this.supplierTel);
   }
 }

@@ -1,21 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { ReportsService } from '../../../service/reports.service';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FSLine } from '../../../models/f-s-line';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-balance-sheet',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './balance-sheet.component.html',
   styleUrl: './balance-sheet.component.css'
 })
-export class BalanceSheetComponent implements OnInit, OnDestroy {
-
-  private subscription! : Subscription;
-
-  public isBalanceSheetOpen: boolean = true;
+export class BalanceSheetComponent implements OnInit {
 
   public balanceSheetDate: string = '';
 
@@ -35,28 +30,13 @@ export class BalanceSheetComponent implements OnInit, OnDestroy {
   public nonCurrentLiability: number = 0;
   public retainedEarnings: number = 0;
 
-  constructor(private reportService: ReportsService, private http: HttpClient) {}
+  constructor(private readonly service: ReportsService) {}
 
   ngOnInit(): void {
-    this.subscription = this.reportService.isBalanceSheetOpen.subscribe(
-      (isBalanceSheetOpen: boolean) => {
-        this.isBalanceSheetOpen = isBalanceSheetOpen;
-      }
-    )
     this.retrieveBSData();
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeReport() {
-    this.isBalanceSheetOpen = false;
-  }
-
-  
   retrieveBSData() {
-
     this.cashAndBankList = [];
     this.currentassetList = [];
     this.nonCurrentAssetList = [];
@@ -72,11 +52,11 @@ export class BalanceSheetComponent implements OnInit, OnDestroy {
     this.nonCurrentLiability =0;
     this.retainedEarnings = 0;
     
-    const body = {
+    const endDate = {
       endDate: this.balanceSheetDate
     };
 
-    this.http.post<FSLine[]>('http://localhost:8080/report/bs', body)
+    this.service.retrieveBSData(endDate)
       .subscribe(data => {
         data.forEach(row => {
           console.log('BS Data item :', row);
@@ -104,7 +84,7 @@ export class BalanceSheetComponent implements OnInit, OnDestroy {
             
         })
       }, error => {
-        console.error('Error fetching PL Data', error);
+        console.error('Error fetching BS Data', error);
       });
     }
   

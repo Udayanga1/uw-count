@@ -3,19 +3,18 @@ import { Subscription } from 'rxjs';
 import { CustomerService } from '../../../service/customer.service';
 import { Customer } from '../../../models/customer';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 type SortField = 'name' | 'email' | 'contactNo' | 'address';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
   selector: 'app-customer-list',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.css'
 })
-export class CustomerListComponent implements OnInit, OnDestroy{
-  isCustomersOpen: boolean = true;
-  private subscription!: Subscription;
+export class CustomerListComponent implements OnInit {
   private customerListSubscription!: Subscription;
 
   showAddForm = false;
@@ -39,25 +38,9 @@ export class CustomerListComponent implements OnInit, OnDestroy{
   constructor(private readonly service: CustomerService){}
 
   ngOnInit(): void {
-    this.subscription = this.service.isCustomersOpen.subscribe(
-      (isCustomersOpen: boolean) => {
-        this.isCustomersOpen = isCustomersOpen;
-      }
-    );
-
     this.customerListSubscription = this.service.getCustomers().subscribe(list => {
         this.customerList = list;
       });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeCustomers() {
-    this.isCustomersOpen = false;
-    this.showAddForm = false;
-    this.showEditCustomerForm = false;
   }
 
   addCustomer() {

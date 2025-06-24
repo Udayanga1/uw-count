@@ -7,7 +7,7 @@
           <h2 class="display-5 fw-bold uw-text-secondary">Suppliers</h2>
           <div class="col-lg-6 mx-auto">
             
-            <div class="feature col mt-5 cursor-pointer" (click)="openEnterBillModal()">
+            <div class="feature col mt-5 cursor-pointer" routerLink="suppliers/enter-bill">
               <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
                 <svg
                   width="1.5em" 
@@ -33,7 +33,7 @@
               <h3 class="fs-2 uw-text-primary">Enter Bills</h3>
             </div>
             
-            <div class="feature col mt-5 cursor-pointer" (click)="openPayBillModal()">
+            <div class="feature col mt-5 cursor-pointer" routerLink="suppliers/pay-bill">
               <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
                 <svg
                     width="1.5em" 
@@ -67,7 +67,7 @@
           <h2 class="display-5 fw-bold uw-text-secondary">Customers</h2>
           <div class="col-lg-6 mx-auto">
             
-            <div class="feature col mt-5 cursor-pointer" (click)="openCreateInvoiceModal()">
+            <div class="feature col mt-5 cursor-pointer" routerLink="customers/create-invoice">
               <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
                 <svg
                     width="1.5em" 
@@ -100,7 +100,7 @@
               <h3 class="fs-2 uw-text-primary">Create Invoices</h3>
             </div>
             
-            <div class="feature col mt-5 cursor-pointer" (click)="openReceivePaymentModal()">
+            <div class="feature col mt-5 cursor-pointer" routerLink="customers/receive-payment">
               <div class="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
                 <svg
                     width="1.5em" 

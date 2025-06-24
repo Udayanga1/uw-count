@@ -8,11 +8,9 @@ import { Observable } from 'rxjs';
 })
 export class CustomerService {
 
-  private baseUrl: string = 'http://localhost:8080/customer'
+  private readonly baseUrl: string = 'http://localhost:8080/customer'
 
   constructor(private readonly http: HttpClient) {}
-
-  isCustomersOpen = new EventEmitter<boolean>();
 
   addCustomer(data: Customer): Observable<Customer>{
     return this.http.post<Customer>(`${this.baseUrl}/add`, data);

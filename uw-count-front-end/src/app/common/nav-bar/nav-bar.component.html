@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark uw-bg-primary" aria-label="Eighth navbar example">
   <div class="container">
-    <a class="navbar-brand">UW Count</a>
+    <a class="navbar-brand" routerLink="/">UW Count</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -10,32 +10,32 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Customers</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" (click)="openCreateInvoiceModal()">Create Invoice</a></li>
-            <li><a class="dropdown-item" (click)="openReceivePaymentModal()">Receive Payments</a></li>
-            <li><a class="dropdown-item" (click)="openAddCustomer()">Customers</a></li>
+            <li><a class="dropdown-item" routerLink="customers/create-invoice">Create Invoice</a></li>
+            <li><a class="dropdown-item" routerLink="customers/receive-payment">Receive Payments</a></li>
+            <li><a class="dropdown-item" routerLink="customers">Customers</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Suppliers</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" (click)="openEnterBillModal()">Enter Bills</a></li>
-            <li><a class="dropdown-item" (click)="openPayBillModal()">Pay Bills</a></li>
-            <li><a class="dropdown-item" (click)="openAddSupplierModal()">Add Supplier</a></li>
+            <li><a class="dropdown-item" routerLink="suppliers/enter-bill">Enter Bills</a></li>
+            <li><a class="dropdown-item" routerLink="suppliers/pay-bill">Pay Bills</a></li>
+            <li><a class="dropdown-item" routerLink="suppliers">Add Supplier</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Company</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" (click)="openChartOfAccountsModal()">Chart of Accounts</a></li>
-            <li><a class="dropdown-item" (click)="openJournalEntry()">Journal Entries</a></li>
-            <li><a class="dropdown-item" (click)="openProducts()">Products / Services</a></li>
+            <li><a class="dropdown-item" routerLink="company/chart-of-accounts">Chart of Accounts</a></li>
+            <li><a class="dropdown-item" routerLink="company/enter-journal">Journal Entries</a></li>
+            <li><a class="dropdown-item" routerLink="company/products">Products / Services</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Reports</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" (click)="openProfitAndLoss()">Profit & Loss</a></li>
-            <li><a class="dropdown-item" (click)="openBalanceSheet()">Balance Sheet</a></li>
+            <li><a class="dropdown-item" routerLink="reports/profit-and-loss">Profit & Loss</a></li>
+            <li><a class="dropdown-item" routerLink="reports/balance-sheet">Balance Sheet</a></li>
             <li><a class="dropdown-item">General Ledger</a></li>
           </ul>
         </li>

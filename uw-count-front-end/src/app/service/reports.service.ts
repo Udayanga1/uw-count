@@ -1,13 +1,22 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { FSLine } from '../models/f-s-line';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportsService {
 
-  constructor() { }
+  private readonly baseUrl: string = 'http://localhost:8080/report';
 
-  isProfitAndLossOpen = new EventEmitter<boolean>();
+  constructor(private readonly http: HttpClient) { }
 
-  isBalanceSheetOpen = new EventEmitter<boolean>();
+  retrieveBSData(data: any): Observable<FSLine[]>{
+    return this.http.post<FSLine[]>(`${this.baseUrl}/bs`, data);
+  }
+  
+  retrievePLData(data: any): Observable<FSLine[]> {
+    return this.http.post<FSLine[]>('http://localhost:8080/report/pl', data);
+  }
 }

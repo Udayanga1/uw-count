@@ -1,23 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { JournalEntryService } from '../../../service/journal-entry.service';
 import { FormsModule } from '@angular/forms';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 import { Journal } from '../../../models/journal';
-import { HttpClient } from '@angular/common/http';
 import { JournalLine } from '../../../models/journal-line';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-journal-entry',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './journal-entry.component.html',
   styleUrl: './journal-entry.component.css'
 })
-export class JournalEntryComponent implements OnInit, OnDestroy {
-
-  public isJournalEntryOpen: boolean = true;
-
-  private subscription!: Subscription;
+export class JournalEntryComponent implements OnInit {
 
   public date: string = new Date().toISOString().substring(0, 10);
 
@@ -32,28 +27,11 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
 
   private journalLines: JournalLine[] = [];
 
-  constructor(private jEService: JournalEntryService, private coaService: ChartOfAccountsService, private httpClient: HttpClient) {}
+  constructor(private readonly jEService: JournalEntryService, private readonly coaService: ChartOfAccountsService, private readonly router: Router) {}
 
   ngOnInit(): void {
-    this.subscription = this.jEService.isJournalEntryOpen.subscribe(
-      (isJournalEntryOpen: boolean) => {
-        this.isJournalEntryOpen = isJournalEntryOpen;
-      }
-    )
-
     this.loadChartOfAccounts();
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeJournalEntry() {
-    this.narration = '';
     this.date = new Date().toISOString().substring(0, 10);
-    this.debitTotal = 0;
-    this.creditTotal = 0;
-    this.isJournalEntryOpen = false;
   }
   
   saveAndClose() {
@@ -92,12 +70,10 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
       jeLines: this.journalLines
     }
 
-    console.log(je);
-
-    this.httpClient.post<Journal>('http://localhost:8080/je/add', je)
+    this.jEService.addJournal(je)
       .subscribe({
         next: created => {
-          this.closeJournalEntry();;
+          this.router.navigate(["/"]);
         },
         error: err => {
           console.error('Error saving journal entry', err);
@@ -108,17 +84,16 @@ export class JournalEntryComponent implements OnInit, OnDestroy {
 
   saveAndNew(){
     this.saveAndClose();
-    // this.isJournalEntryOpen = true;
+    setTimeout(() => {
+      this.router.navigate(["company/enter-journal"]);
+    }, 200);
   }
 
 
   addRow(event: any): void{
-
-    // this.calTotals(event);
     
     const currentRow = event.target.closest('tr');
-    const tbody = currentRow.parentElement
-    
+    const tbody = currentRow.parentElement;
 
     const nextRow = currentRow.nextElementSibling;
 

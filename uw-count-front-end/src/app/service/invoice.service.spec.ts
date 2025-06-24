@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ModalCreateInvoiceService } from './modal-create-invoice.service';
+import { InvoiceService } from './invoice.service';
 
 describe('ModalCreateInvoiceService', () => {
-  let service: ModalCreateInvoiceService;
+  let service: InvoiceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ModalCreateInvoiceService);
+    service = TestBed.inject(InvoiceService);
   });
 
   it('should be created', () => {

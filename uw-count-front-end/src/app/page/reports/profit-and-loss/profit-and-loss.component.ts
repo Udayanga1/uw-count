@@ -1,21 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { ReportsService } from '../../../service/reports.service';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { FSLine } from '../../../models/f-s-line';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profit-and-loss',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './profit-and-loss.component.html',
   styleUrl: './profit-and-loss.component.css'
 })
-export class ProfitAndLossComponent implements OnInit, OnDestroy {
-
-  private subscription! : Subscription;
-
-  public isProfitAndLossOpen: boolean = true;
+export class ProfitAndLossComponent implements OnInit {
 
   public revenueList: FSLine[] = [];
   public otherRevenueList: FSLine[] = [];
@@ -33,27 +28,13 @@ export class ProfitAndLossComponent implements OnInit, OnDestroy {
     endDate: ''
   }
 
-  constructor(private reportService: ReportsService, private http: HttpClient) {}
+  constructor(private readonly service: ReportsService) {}
 
   ngOnInit(): void {
-    this.subscription = this.reportService.isProfitAndLossOpen.subscribe(
-      (isProfitAndLossOpen: boolean) => {
-        this.isProfitAndLossOpen = isProfitAndLossOpen;
-      }
-    )
     this.retrievePLData();
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeReport() {
-    this.isProfitAndLossOpen = false;
-  }
-
   retrievePLData(): void {
-
     this.revenueList = [];
     this.otherRevenueList = [];
     this.expenseList = [];
@@ -65,12 +46,12 @@ export class ProfitAndLossComponent implements OnInit, OnDestroy {
     this.otherExpense =0;
     this.netProfit = 0;
 
-    const body = {
+    const dates = {
       startDate: this.filter.startDate,
       endDate: this.filter.endDate
     };
 
-    this.http.post<FSLine[]>('http://localhost:8080/report/pl', body)
+    this.service.retrievePLData(dates)
       .subscribe(data => {
         data.forEach(row => {
           console.log('PL Data item :', row);
@@ -88,8 +69,7 @@ export class ProfitAndLossComponent implements OnInit, OnDestroy {
             this.otherExpense+= row.amount;
           } else if (row.accName === "Net Profit" && row.accountType === "Profit") {
             this.netProfit = row.amount;
-          }
-            
+          }           
         })
       }, error => {
         console.error('Error fetching PL Data', error);

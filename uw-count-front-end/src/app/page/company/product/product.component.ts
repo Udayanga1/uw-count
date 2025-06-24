@@ -1,24 +1,23 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ProductService } from '../../../service/product.service';
 import { Product } from '../../../models/product';
 import { FormsModule } from '@angular/forms';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 import { Account } from '../../../models/account';
+import { RouterLink } from '@angular/router';
 
 type SortField = 'code' | 'name' | 'accountId';
 type SortDir   = 'asc' | 'desc';
 
 @Component({
   selector: 'app-product',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './product.component.html',
   styleUrl: './product.component.css'
 })
-export class ProductComponent implements OnInit, OnDestroy{
+export class ProductComponent implements OnInit{
 
-  isProductsOpen: boolean = true;
-  private subscription!: Subscription;
   private accountListSubscription!: Subscription;
   private productListSubscription!: Subscription;
 
@@ -38,15 +37,9 @@ export class ProductComponent implements OnInit, OnDestroy{
 
   productList: Product[] = [];
 
-  constructor(private productService: ProductService, private coaService: ChartOfAccountsService) {}
+  constructor(private readonly productService: ProductService, private readonly coaService: ChartOfAccountsService) {}
 
   ngOnInit(): void {
-    this.subscription = this.productService.isProductsOpen.subscribe(
-      (isProductsOpen: boolean) => {
-        this.isProductsOpen = isProductsOpen;
-      }
-    );
-
     this.incomeAccountList = [];
     this.accountListSubscription = this.coaService.getAccounts()
       .subscribe(list => {
@@ -61,14 +54,6 @@ export class ProductComponent implements OnInit, OnDestroy{
       this.productList = list
     });
     
-  }
-  
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeProducts() {
-    this.isProductsOpen = false;
   }
 
   addProduct() {

@@ -1,27 +1,25 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ModalPayBillService } from '../../../service/modal-pay-bill.service';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Account } from '../../../models/account';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
 import { Bill } from '../../../models/bill';
 import { Supplier } from '../../../models/supplier';
 import { SupplierService } from '../../../service/supplier.service';
-import { HttpClient } from '@angular/common/http';
 import { BillPayment } from '../../../models/bill-pmt';
 import { BillPmtTransaction } from '../../../models/bill-pmt-transaction';
+import { Router, RouterLink } from '@angular/router';
+import { BillService } from '../../../service/bill.service';
 
 @Component({
   selector: 'app-pay-bill',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './pay-bill.component.html',
   styleUrl: './pay-bill.component.css'
 })
 
 
-export class PayBillComponent implements OnInit, OnDestroy{
-  public isPayBillsOpen: boolean = true;
-  private subscription!: Subscription;
+export class PayBillComponent implements OnInit {
+
   public payDate: string = '';
 
   public supplier = '';
@@ -38,15 +36,9 @@ export class PayBillComponent implements OnInit, OnDestroy{
 
   total: number = this.invoiceList.length>0 ? this.invoiceList[0].payableBal : 0;
 
-  constructor(private modalService: ModalPayBillService, private coaService: ChartOfAccountsService, private supplierService: SupplierService, private httpClient: HttpClient) {}
+  constructor(private readonly service: BillService, private readonly coaService: ChartOfAccountsService, private readonly supplierService: SupplierService, private readonly router: Router) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isPayBillsOpen.subscribe(
-      (isPayBillsOpen: boolean) => {
-        this.isPayBillsOpen = isPayBillsOpen;
-      } 
-    );
-
     const today = new Date();
     this.payDate = today.toISOString().split('T')[0];
     
@@ -60,17 +52,6 @@ export class PayBillComponent implements OnInit, OnDestroy{
     
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeModal() {
-    this.isPayBillsOpen = false;
-    this.supplier = '';
-    this.invoiceList = [];
-    this.total = 0;
-  }
-
   fillPayingAmount(event: any): void {
 
     let changeAmountPaying: boolean = true;
@@ -82,7 +63,6 @@ export class PayBillComponent implements OnInit, OnDestroy{
     const amountToPay = currentRow.querySelector('.amount-to-pay');
     const amountPaying = currentRow.querySelector('.amount-paying');
     const payingAmountRows = currentRow.parentElement.querySelectorAll('.amount-paying');
-    const checkBox = currentRow.querySelector('.form-check-input');
 
     if(amountPaying.value > 0 && amountToPay.value!=amountPaying.value){
         changeAmountPaying = false;
@@ -137,7 +117,6 @@ export class PayBillComponent implements OnInit, OnDestroy{
     } else {
       currentRow.querySelector('.form-check-input').checked = false;
     }
-
     totalInput.value = this.total;
   }
 
@@ -147,14 +126,13 @@ export class PayBillComponent implements OnInit, OnDestroy{
         this.payingAccountCode = account.code;
       }
     })
-    
   }
 
   payAndNew() {
     this.payAndClose();
     setTimeout(()=>{
-      this.isPayBillsOpen = true;
-    }, 10);
+      this.router.navigate(['suppliers/pay-bill']);
+    }, 200);
   }
 
   payAndClose(){
@@ -192,19 +170,16 @@ export class PayBillComponent implements OnInit, OnDestroy{
     };
     
     
-    this.httpClient.post<Bill>('http://localhost:8080/bill/pay-bills', billPayment)
+    this.service.payBill(billPayment)
       .subscribe({
         next: created => {
-          console.log(created);
-          this.closeModal();
+          this.router.navigate(['/'])
         },
         error: err => {
           console.error('Error saving payment', err);
           alert('Failed to save payment');
         }
       });
-    // console.log("Paid");
-    // this.closeModal();
   }
 
   loadCashAndBankOfAccounts(): void {
@@ -231,7 +206,7 @@ export class PayBillComponent implements OnInit, OnDestroy{
   }
 
   loadSupplierInvoices(supplierName: string): void {
-    this.modalService.getSupplierBills(supplierName).forEach(row => {
+    this.service.getSupplierBills(supplierName).forEach(row => {
       row.forEach(invoice => {
         if (invoice.payableBal>0) {
           this.invoiceList.push(invoice)
@@ -242,7 +217,7 @@ export class PayBillComponent implements OnInit, OnDestroy{
 
   setSupplier() {
     this.invoiceList=[];
-    this.modalService.supplierName = this.supplier;
+    this.service.supplierName = this.supplier;
     this.loadSupplierInvoices(this.supplier);
   }
 

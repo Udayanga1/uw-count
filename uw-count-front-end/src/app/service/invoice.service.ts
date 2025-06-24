@@ -6,13 +6,13 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ModalCreateInvoiceService {
+export class InvoiceService {
 
   isCreateInvoiceOpen = new EventEmitter<boolean>();
 
-  private baseUrl = 'http://localhost:8080/invoice';
+  private readonly baseUrl = 'http://localhost:8080/invoice';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   addInvoice(data: Invoice): Observable<Invoice>{
       return this.http.post<Invoice>(`${this.baseUrl}/add`, data);

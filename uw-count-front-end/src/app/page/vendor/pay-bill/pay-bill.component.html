@@ -1,107 +1,104 @@
-@if (isPayBillsOpen) {
-  <div class="position-static d-block p-4" style="max-width: 1000px;">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content rounded-4 shadow p-3 bg-white">
-        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
-          <h1 class="modal-title fs-5 uw-text-primary">Pay Bills</h1>
-          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
-        </div>
-        <div class="modal-body py-0">
-          <div class="d-flex justify-content-between gap-4">
-            <div class="input-group mb-3">
-              <span class="input-group-text">Supplier</span>
-              <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier" (change)="setSupplier()">
-              <datalist id="supplierlist">
-                @for (supplier of supplierList; track $index) {
-                  <option value={{supplier.name}}>
-                }
-              </datalist>
-            </div>
-            <div class="input-group mb-3 w-50">
-              <span class="input-group-text">Date</span>
-              <input type="date" class="form-control" id="invoice-date-enter-bill" [(ngModel)]="payDate">
-            </div>
+<div class="position-static d-block p-4" style="max-width: 1000px;">
+  <div class="modal-dialog">
+    <div class="modal-content rounded-4 shadow p-3 bg-white">
+      <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+        <h1 class="modal-title fs-5 uw-text-primary">Pay Bills</h1>
+        <button type="button" class="btn-close" routerLink="/" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-0">
+        <div class="d-flex justify-content-between gap-4">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Supplier</span>
+            <input type="search" list="supplierlist" class="form-control" [(ngModel)]="supplier" (change)="setSupplier()">
+            <datalist id="supplierlist">
+              @for (supplier of supplierList; track $index) {
+                <option value={{supplier.name}}>
+              }
+            </datalist>
           </div>
-          <div class="d-flex justify-content-between gap-4">
-            <div class="input-group mb-3">
-              <span class="input-group-text">Payment Method</span>
-              <select class="form-select" id="inputGroupSelect01" [(ngModel)]="paymentMethod" (change)="loadCashAndBankOfAccounts()">
-                <option value="1" selected>Cash and Bank</option>
-                <option value="2">Credit Card</option>
-              </select>
-            </div>
-            <div class="input-group mb-3">
-              <span class="input-group-text">Paying Account</span>
-              <input type="search" list="pay-accountlist" class="form-control" [(ngModel)]= "payingAccount" (change)="setPayingAccountCode()">
-              <datalist id="pay-accountlist">
-                @for (account of payingAccountList; track $index) {
-                  <option value={{account.name}}>
-                }
-             </datalist>
-            </div>
-            
+          <div class="input-group mb-3 w-50">
+            <span class="input-group-text">Date</span>
+            <input type="date" class="form-control" id="invoice-date-enter-bill" [(ngModel)]="payDate">
           </div>
         </div>
-        <table class="table">
-          <thead>
+        <div class="d-flex justify-content-between gap-4">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Payment Method</span>
+            <select class="form-select" id="inputGroupSelect01" [(ngModel)]="paymentMethod" (change)="loadCashAndBankOfAccounts()">
+              <option value="1" selected>Cash and Bank</option>
+              <option value="2">Credit Card</option>
+            </select>
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Paying Account</span>
+            <input type="search" list="pay-accountlist" class="form-control" [(ngModel)]= "payingAccount" (change)="setPayingAccountCode()">
+            <datalist id="pay-accountlist">
+              @for (account of payingAccountList; track $index) {
+                <option value={{account.name}}>
+              }
+            </datalist>
+          </div>
+          
+        </div>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th><input class="ms-2" type="checkbox" checked disabled></th>
+            <th scope="col" class="uw-text-primary">Invoice</th>
+            <th scope="col" class="uw-text-primary">Amount Due</th>
+            <th scope="col" class="uw-text-primary">Discount</th>
+            <th scope="col" class="uw-text-primary">Amount to Pay</th>
+            <th scope="col" class="uw-text-primary">Amount Paying</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (invoiceList.length==0) {
             <tr>
-              <th><input class="ms-2" type="checkbox" checked disabled></th>
-              <th scope="col" class="uw-text-primary">Invoice</th>
-              <th scope="col" class="uw-text-primary">Amount Due</th>
-              <th scope="col" class="uw-text-primary">Discount</th>
-              <th scope="col" class="uw-text-primary">Amount to Pay</th>
-              <th scope="col" class="uw-text-primary">Amount Paying</th>
+              <td colspan="5">No Invoices to display</td>
             </tr>
-          </thead>
-          <tbody>
-            @if (invoiceList.length==0) {
-              <tr>
-                <td colspan="5">No Invoices to display</td>
-              </tr>
-            }
-            @for (invoice of invoiceList; track $index) {
-              <tr>
-                <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
-                <td class="d-none"><input type="number" class="form-control bill_id" [value]="invoice.id"></td>
-                <td><input type="text" class="form-control invoice-no" [value]="invoice.invoiceNo" disabled></td>
-                <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.payableBal" disabled></td>
-                <td><input type="number" class="form-control discount" style="width: 90px;" (change)="fillPayingAmount($event)"></td>
-                <td class="">
-                  <div class="d-flex justify-content-between">
-                    <div class="col-auto w-75">
-                      <input type="number" class="form-control amount-to-pay" style="width: 120px;" [value]="invoice.payableBal" disabled>
-                    </div>
-                  </div>
-                </td>
-                <td class="">
-                  <div class="d-flex justify-content-between">
-                    <div class="col-auto w-75">
-                        <input type="number" class="form-control amount-paying" style="width: 120px;" (change)="calculateTotal($event)">
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            }            
-          </tbody>
-        </table>
-        <div class="row ms-auto me-2 w-25">
-
-          @if (invoiceList.length>0) {
-            <div class="input-group input-group-sm mb-3">
-              <span class="input-group-tex border-0 bg-white w-50 h5">Total</span>
-              <input type="text" class="form-control border-0 bg-white border-bottom text-end h5 total-pay-bill" disabled id="total-pay-bill" [value]="total">
-            </div>
           }
+          @for (invoice of invoiceList; track $index) {
+            <tr>
+              <td><input class="form-check-input p-3" type="checkbox" (change)="fillPayingAmount($event)"></td>  
+              <td class="d-none"><input type="number" class="form-control bill_id" [value]="invoice.id"></td>
+              <td><input type="text" class="form-control invoice-no" [value]="invoice.invoiceNo" disabled></td>
+              <td><input type="number" class="form-control invoice-value" style="width: 90px;" [value]="invoice.payableBal" disabled></td>
+              <td><input type="number" class="form-control discount" style="width: 90px;" (change)="fillPayingAmount($event)"></td>
+              <td class="">
+                <div class="d-flex justify-content-between">
+                  <div class="col-auto w-75">
+                    <input type="number" class="form-control amount-to-pay" style="width: 120px;" [value]="invoice.payableBal" disabled>
+                  </div>
+                </div>
+              </td>
+              <td class="">
+                <div class="d-flex justify-content-between">
+                  <div class="col-auto w-75">
+                      <input type="number" class="form-control amount-paying" style="width: 120px;" (change)="calculateTotal($event)">
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }            
+        </tbody>
+      </table>
+      <div class="row ms-auto me-2 w-25">
 
-        </div>
+        @if (invoiceList.length>0) {
+          <div class="input-group input-group-sm mb-3">
+            <span class="input-group-tex border-0 bg-white w-50 h5">Total</span>
+            <input type="text" class="form-control border-0 bg-white border-bottom text-end h5 total-pay-bill" disabled id="total-pay-bill" [value]="total">
+          </div>
+        }
 
-        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
-          <button type="button" class="btn btn-lg" id="pay-n-new" (click)="payAndNew()">Pay & New</button>
-          <button type="button" class="btn btn-lg" id="pay-n-close" (click)="payAndClose()">Pay & Close</button>
-          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Cancel</button>
-        </div>
+      </div>
+
+      <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+        <button type="button" class="btn btn-lg" id="pay-n-new" (click)="payAndNew()">Pay & New</button>
+        <button type="button" class="btn btn-lg" id="pay-n-close" (click)="payAndClose()">Pay & Close</button>
+        <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" routerLink="/">Cancel</button>
       </div>
     </div>
   </div>
-}
-
+</div>

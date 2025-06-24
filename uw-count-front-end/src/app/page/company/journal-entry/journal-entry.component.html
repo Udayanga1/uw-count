@@ -1,89 +1,87 @@
-@if (isJournalEntryOpen) {
-    <div class="position-static d-block p-4" style="max-width: 1000px;">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content rounded-4 shadow p-3 bg-white">
-        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
-          <h1 class="modal-title fs-5 uw-text-primary">Add Journal</h1>
-          <button type="button" class="btn-close" (click)="closeJournalEntry()" aria-label="Close"></button>
-        </div>
+<div class="position-static d-block p-4" style="max-width: 1000px;">
+  <div class="modal-dialog">
+    <div class="modal-content rounded-4 shadow p-3 bg-white">
+      <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+        <h1 class="modal-title fs-5 uw-text-primary">Add Journal</h1>
+        <button type="button" class="btn-close" routerLink="/" aria-label="Close"></button>
+      </div>
 
-        <div class="row">
-          <div class="py-2 col-8">
-            <label for="narration" class="form-label uw-text-primary fw-bold px-1 ">Narration</label>
-            <input type="text" id="narration" class="form-control ms-1"
-                  [(ngModel)]="narration" name="narration">
-          </div>
-          <div class="py-2 col-4">
-            <label for="date" class="form-label uw-text-primary fw-bold px-1">Date</label>
-            <input type="date" id="date" class="form-control ms-1"
-                  [(ngModel)]="date" name="date">
-          </div>
-          
+      <div class="row">
+        <div class="py-2 col-8">
+          <label for="narration" class="form-label uw-text-primary fw-bold px-1 ">Narration</label>
+          <input type="text" id="narration" class="form-control ms-1"
+                [(ngModel)]="narration" name="narration">
         </div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col" class="uw-text-primary">Account</th>
-              <th scope="col" class="uw-text-primary">Debit</th>
-              <th scope="col" class="uw-text-primary">Credit</th>
-              <th scope="col" class="uw-text-primary">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="search" list="accountlist" class="form-control account" (change)="addRow($event)" placeholder="Select an account"></td>
-              <td><input type="number" class="form-control debit" style="width: 90px;" (change)="calTotals($event)"></td>
-              <td><input type="number" class="form-control credit" style="width: 90px;" (change)="calTotals($event)"></td>
-              <td><input type="text" style="width: 300px;" class="form-control description"></td>
-              <td class="">
-                <div class="d-flex justify-content-between">
-                  <div class="col-auto">
-                    <!-- <button type="button" class="btn-close mt-1" (click)="removeRow($event)"></button> -->
-                    <input type="button" class="btn-close mt-1" (click)="removeRow($event)" />
-                  </div>
+        <div class="py-2 col-4">
+          <label for="date" class="form-label uw-text-primary fw-bold px-1">Date</label>
+          <input type="date" id="date" class="form-control ms-1"
+                [(ngModel)]="date" name="date">
+        </div>
+        
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" class="uw-text-primary">Account</th>
+            <th scope="col" class="uw-text-primary">Debit</th>
+            <th scope="col" class="uw-text-primary">Credit</th>
+            <th scope="col" class="uw-text-primary">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="search" list="accountlist" class="form-control account" (change)="addRow($event)" placeholder="Select an account"></td>
+            <td><input type="number" class="form-control debit" style="width: 90px;" (change)="calTotals($event)"></td>
+            <td><input type="number" class="form-control credit" style="width: 90px;" (change)="calTotals($event)"></td>
+            <td><input type="text" style="width: 300px;" class="form-control description"></td>
+            <td class="">
+              <div class="d-flex justify-content-between">
+                <div class="col-auto">
+                  <!-- <button type="button" class="btn-close mt-1" (click)="removeRow($event)"></button> -->
+                  <input type="button" class="btn-close mt-1" (click)="removeRow($event)" />
                 </div>
-              </td>
-            </tr>
-            <datalist id="accountlist">
-              @for (account of modifiedAccountList; track $index) {
-                <option value={{account}}>
+              </div>
+            </td>
+          </tr>
+          <datalist id="accountlist">
+            @for (account of modifiedAccountList; track $index) {
+              <option value={{account}}>
+            }
+            </datalist>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td><hr><input type="number" class="form-control unit-price" style="width: 90px;" value={{debitTotal}} disabled></td>
+            <td><hr><input type="number" class="form-control quantity" style="width: 90px;" value={{creditTotal}} disabled></td>
+            <td class="h6"><hr class="opacity-0">
+              @if (isEmptyAccount && debitTotal !=0 && debitTotal == creditTotal) {
+                <small class="uw-text-secondary">Debit or Credit should have an account</small>
+              } @else if(debitTotal != creditTotal) {
+                <small class="uw-text-secondary">Debit and Credit Do not match</small>
+              } @else if (debitTotal !=0 && debitTotal == creditTotal) {
+                <small class="uw-text-primary">Debit and Credit matches</small>
               }
-             </datalist>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td></td>
-              <td><hr><input type="number" class="form-control unit-price" style="width: 90px;" value={{debitTotal}} disabled></td>
-              <td><hr><input type="number" class="form-control quantity" style="width: 90px;" value={{creditTotal}} disabled></td>
-              <td class="h6"><hr class="opacity-0">
-                @if (isEmptyAccount && debitTotal !=0 && debitTotal == creditTotal) {
-                  <small class="uw-text-secondary">Debit or Credit should have an account</small>
-                } @else if(debitTotal != creditTotal) {
-                  <small class="uw-text-secondary">Debit and Credit Do not match</small>
-                } @else if (debitTotal !=0 && debitTotal == creditTotal) {
-                  <small class="uw-text-primary">Debit and Credit matches</small>
-                }
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
 
-        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
-          @if (debitTotal == 0 || debitTotal !=creditTotal || isEmptyAccount) {
-            <button type="button" class="btn btn-lg" id="save-n-new" disabled (click)="saveAndNew()">Save & New</button>
-          } @else {
-            <button type="button" class="btn btn-lg" id="save-n-new" (click)="saveAndNew()">Save & New</button>
-          }
+      <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+        @if (debitTotal == 0 || debitTotal !=creditTotal || isEmptyAccount) {
+          <button type="button" class="btn btn-lg" id="save-n-new" disabled (click)="saveAndNew()">Save & New</button>
+        } @else {
+          <button type="button" class="btn btn-lg" id="save-n-new" (click)="saveAndNew()">Save & New</button>
+        }
 
-          @if (debitTotal == 0 || debitTotal != creditTotal || isEmptyAccount) {
-            <button type="button" class="btn btn-lg" id="save-n-close" disabled (click)="saveAndClose()">Save & Close</button>
-          } @else {
-            <button type="button" class="btn btn-lg" id="save-n-close" (click)="saveAndClose()">Save & Close</button>
-          }
+        @if (debitTotal == 0 || debitTotal != creditTotal || isEmptyAccount) {
+          <button type="button" class="btn btn-lg" id="save-n-close" disabled (click)="saveAndClose()">Save & Close</button>
+        } @else {
+          <button type="button" class="btn btn-lg" id="save-n-close" (click)="saveAndClose()">Save & Close</button>
+        }
 
-          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeJournalEntry()">Cancel</button>
-        </div>
+        <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" routerLink="/">Cancel</button>
       </div>
     </div>
   </div>
-}
+</div>

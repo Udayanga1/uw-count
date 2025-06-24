@@ -1,166 +1,163 @@
-@if (isBalanceSheetOpen) {
-  <div class="position-static d-block p-4" style="max-width: 700px;">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content rounded-4 shadow p-3 bg-white">
-        <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
-          <h1 class="modal-title fs-5 uw-text-primary">Balance Sheet</h1>
-          <button type="button" class="btn-close" (click)="closeReport()" aria-label="Close"></button>
+<div class="position-static d-block p-4" style="max-width: 700px;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content rounded-4 shadow p-3 bg-white">
+      <div class="modal-header border-bottom-0 d-flex justify-content-between p-1">
+        <h1 class="modal-title fs-5 uw-text-primary">Balance Sheet</h1>
+        <button type="button" class="btn-close" routerLink="/" aria-label="Close"></button>
+      </div>
+
+      <div class="row g-2 mb-4 filter-buttons align-items-center uw-text-secondary">
+        <div class="col-auto mb-3">
+          <label class="form-label px-2 mt-3" ><h6>Balance Sheet Date</h6></label>
         </div>
-
-        <div class="row g-2 mb-4 filter-buttons align-items-center uw-text-secondary">
-          <div class="col-auto mb-3">
-            <label class="form-label px-2 mt-3" ><h6>Balance Sheet Date</h6></label>
-          </div>
-          <div class="col-auto mb-3">
-            <input 
-              type="date" 
-              placeholder="Start Date" 
-              class="form-control uw-text-secondary"
-              [(ngModel)]="balanceSheetDate"
-              (change)="retrieveBSData()"
-            />
-          </div>
+        <div class="col-auto mb-3">
+          <input 
+            type="date" 
+            placeholder="Start Date" 
+            class="form-control uw-text-secondary"
+            [(ngModel)]="balanceSheetDate"
+            (change)="retrieveBSData()"
+          />
         </div>
+      </div>
 
-        <table class="table table-borderless">
-          <tbody>
+      <table class="table table-borderless">
+        <tbody>
+          <tr>
+            <td class="h5">Assets</td>
+          </tr>
+          @if ( cashAndBank !=0 || currentasset !=0) {
             <tr>
-              <td class="h5">Assets</td>
+              <td class="h6">Current Assets</td>
             </tr>
-            @if ( cashAndBank !=0 || currentasset !=0) {
-              <tr>
-                <td class="h6">Current Assets</td>
-              </tr>
-            }
-            @for (row of cashAndBankList; track $index) {
-              <tr>
-                <td>{{row.accName}}</td>
-                <td>{{row.amount}}</td>
-              </tr>
-            }
-            @for (row of currentassetList; track $index) {
-              <tr>
-                <td>{{row.accName}}</td>
-                <td>{{row.amount}}</td>
-              </tr>
-            }
-            @if ((cashAndBank + currentasset) == 0) {
-              <tr>
-                <td class="h6">Current Assets</td>
-                <td class="h6"><hr>{{cashAndBank + currentasset}}<hr></td>
-              </tr>
-            } @else {
-              <tr>
-                <td></td>
-                <td class="h6"><hr>{{cashAndBank + currentasset}}<hr></td>
-              </tr>
-            }
-            @if ( nonCurrentAsset !=0 ) {
-              <tr>
-                <td class="h6">Non Current Assets</td>
-              </tr>
-            }
-            @for (row of nonCurrentAssetList; track $index) {
-              <tr>
-                <td>{{row.accName}}</td>
-                <td>{{row.amount}}</td>
-              </tr>
-            }
-            @if (nonCurrentAsset == 0) {
-              <tr>
-                <td class="h6">Non Current Assets</td>
-                <td class="h6"><hr>{{nonCurrentAsset}}<hr></td>
-              </tr>
-            } @else {
-              <tr>
-                <td></td>
-                <td class="h6"><hr>{{nonCurrentAsset}}<hr></td>
-              </tr>
-            }
+          }
+          @for (row of cashAndBankList; track $index) {
             <tr>
-              <td class="h5">Total Assets</td>
-              <td class="h5"><hr>{{cashAndBank + currentasset + nonCurrentAsset}}<hr></td>
+              <td>{{row.accName}}</td>
+              <td>{{row.amount}}</td>
             </tr>
+          }
+          @for (row of currentassetList; track $index) {
+            <tr>
+              <td>{{row.accName}}</td>
+              <td>{{row.amount}}</td>
+            </tr>
+          }
+          @if ((cashAndBank + currentasset) == 0) {
+            <tr>
+              <td class="h6">Current Assets</td>
+              <td class="h6"><hr>{{cashAndBank + currentasset}}<hr></td>
+            </tr>
+          } @else {
+            <tr>
+              <td></td>
+              <td class="h6"><hr>{{cashAndBank + currentasset}}<hr></td>
+            </tr>
+          }
+          @if ( nonCurrentAsset !=0 ) {
+            <tr>
+              <td class="h6">Non Current Assets</td>
+            </tr>
+          }
+          @for (row of nonCurrentAssetList; track $index) {
+            <tr>
+              <td>{{row.accName}}</td>
+              <td>{{row.amount}}</td>
+            </tr>
+          }
+          @if (nonCurrentAsset == 0) {
+            <tr>
+              <td class="h6">Non Current Assets</td>
+              <td class="h6"><hr>{{nonCurrentAsset}}<hr></td>
+            </tr>
+          } @else {
+            <tr>
+              <td></td>
+              <td class="h6"><hr>{{nonCurrentAsset}}<hr></td>
+            </tr>
+          }
+          <tr>
+            <td class="h5">Total Assets</td>
+            <td class="h5"><hr>{{cashAndBank + currentasset + nonCurrentAsset}}<hr></td>
+          </tr>
 
+          <tr>
+            <td class="h5">Liabilities</td>
+          </tr>
+          @if ( creditCard !=0 || creditCard !=0) {
             <tr>
-              <td class="h5">Liabilities</td>
+              <td class="h6">Current Liabilities</td>
             </tr>
-            @if ( creditCard !=0 || creditCard !=0) {
-              <tr>
-                <td class="h6">Current Liabilities</td>
-              </tr>
-            }
-            @for (row of creditCardList; track $index) {
-              <tr>
-                <td>{{row.accName}}</td>
-                <td>{{row.amount}}</td>
-              </tr>
-            }
-            @for (row of currentliabilityList; track $index) {
-              <tr>
-                <td>{{row.accName}}</td>
-                <td>{{row.amount}}</td>
-              </tr>
-            }
-            @if ((creditCard + currentliability) == 0) {
-              <tr>
-                <td class="h6">Current Assets</td>
-                <td class="h6"><hr>{{creditCard + currentliability}}<hr></td>
-              </tr>
-            } @else {
-              <tr>
-                <td></td>
-                <td class="h6"><hr>{{creditCard + currentliability}}<hr></td>
-              </tr>
-            }
-            @if ( nonCurrentAsset !=0 ) {
-              <tr>
-                <td class="h6">Non Current Liabilities</td>
-              </tr>
-            }
-            @for (row of nonCurrentLiabilityList; track $index) {
-              <tr>
-                <td>{{row.accName}}</td>
-                <td>{{row.amount}}</td>
-              </tr>
-            }
-            @if (nonCurrentLiability == 0) {
-              <tr>
-                <td class="h6">Non Current Liabilities</td>
-                <td class="h6"><hr>{{nonCurrentLiability}}<hr></td>
-              </tr>
-            } @else {
-              <tr>
-                <td></td>
-                <td class="h6"><hr>{{nonCurrentLiability}}<hr></td>
-              </tr>
-            }
+          }
+          @for (row of creditCardList; track $index) {
             <tr>
-              <td class="h5">Total Liabilities</td>
-              <td class="h5"><hr>{{creditCard + currentliability + nonCurrentLiability}}<hr></td>
+              <td>{{row.accName}}</td>
+              <td>{{row.amount}}</td>
             </tr>
+          }
+          @for (row of currentliabilityList; track $index) {
+            <tr>
+              <td>{{row.accName}}</td>
+              <td>{{row.amount}}</td>
+            </tr>
+          }
+          @if ((creditCard + currentliability) == 0) {
+            <tr>
+              <td class="h6">Current Assets</td>
+              <td class="h6"><hr>{{creditCard + currentliability}}<hr></td>
+            </tr>
+          } @else {
+            <tr>
+              <td></td>
+              <td class="h6"><hr>{{creditCard + currentliability}}<hr></td>
+            </tr>
+          }
+          @if ( nonCurrentAsset !=0 ) {
+            <tr>
+              <td class="h6">Non Current Liabilities</td>
+            </tr>
+          }
+          @for (row of nonCurrentLiabilityList; track $index) {
+            <tr>
+              <td>{{row.accName}}</td>
+              <td>{{row.amount}}</td>
+            </tr>
+          }
+          @if (nonCurrentLiability == 0) {
+            <tr>
+              <td class="h6">Non Current Liabilities</td>
+              <td class="h6"><hr>{{nonCurrentLiability}}<hr></td>
+            </tr>
+          } @else {
+            <tr>
+              <td></td>
+              <td class="h6"><hr>{{nonCurrentLiability}}<hr></td>
+            </tr>
+          }
+          <tr>
+            <td class="h5">Total Liabilities</td>
+            <td class="h5"><hr>{{creditCard + currentliability + nonCurrentLiability}}<hr></td>
+          </tr>
 
-            <tr>
-              <td class="h5">Equity</td>
-            </tr>
-            <tr>
-              <td class="h6">Retained Earnings</td>
-              <td class="h6"><hr>{{retainedEarnings}}<hr></td>
-            </tr>
-            <tr>
-              <td class="h5">Total Equity</td>
-              <td class="h5"><hr>{{retainedEarnings}}<hr></td>
-            </tr>
+          <tr>
+            <td class="h5">Equity</td>
+          </tr>
+          <tr>
+            <td class="h6">Retained Earnings</td>
+            <td class="h6"><hr>{{retainedEarnings}}<hr></td>
+          </tr>
+          <tr>
+            <td class="h5">Total Equity</td>
+            <td class="h5"><hr>{{retainedEarnings}}<hr></td>
+          </tr>
 
-          </tbody>
+        </tbody>
 
-        </table>
+      </table>
 
-        <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
-          <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" (click)="closeReport()">Cancel</button>
-        </div>
+      <div class="modal-footer align-items-stretch w-100 gap-2 pb-3 border-top-0">
+        <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal" routerLink="/">Cancel</button>
       </div>
     </div>
   </div>
-}
-
+</div>

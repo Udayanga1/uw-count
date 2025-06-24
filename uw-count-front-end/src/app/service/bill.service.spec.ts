@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { BillService } from './bill.service';
 
-import { ModalPayBillService } from './modal-pay-bill.service';
-
-describe('ModalPayBillService', () => {
-  let service: ModalPayBillService;
+describe('ModalEnterBillService', () => {
+  let service: BillService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ModalPayBillService);
+    service = TestBed.inject(BillService);
   });
 
   it('should be created', () => {

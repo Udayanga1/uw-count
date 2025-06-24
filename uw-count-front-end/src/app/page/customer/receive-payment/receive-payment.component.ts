@@ -1,17 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ModalReceivePaymentService } from '../../../service/modal-receive-payment.service';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { InvoiceService } from '../../../service/invoice.service';
 
 @Component({
   selector: 'app-receive-payment',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './receive-payment.component.html',
   styleUrl: './receive-payment.component.css'
 })
-export class ReceivePaymentComponent implements OnInit, OnDestroy{
-
-  isReceivePaymentOpen: boolean = true;
-  private subscription!: Subscription;
+export class ReceivePaymentComponent implements OnInit{
   payDate: string = '';
   
   private receivedAmount: number = 0;
@@ -30,28 +27,11 @@ export class ReceivePaymentComponent implements OnInit, OnDestroy{
 
   total: number = this.invoiceList.length>0 ? this.invoiceList[0].value : 0;
 
-  constructor(private modalService: ModalReceivePaymentService) {}
+  constructor(private readonly service: InvoiceService, private readonly router: Router) {}
 
-  ngOnInit(): void {
-    this.subscription = this.modalService.isReceivePaymentOpen.subscribe(
-      (isReceivePaymentOpen: boolean) => {
-        this.isReceivePaymentOpen = isReceivePaymentOpen;
-      } 
-    );
-
-    console.log("ngOnInit: receive-palyment.ts");
-    
-
+  ngOnInit(): void {   
     const today = new Date();
     this.payDate = today.toISOString().split('T')[0];
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeModal() {
-    this.isReceivePaymentOpen = false;
   }
 
   fillPayingAmount(event: any): void {
@@ -113,14 +93,14 @@ export class ReceivePaymentComponent implements OnInit, OnDestroy{
   receiveAndNew() {
     this.receiveAndClose();
     setTimeout(()=>{
-      this.isReceivePaymentOpen = true;
+      this.router.navigate(['customers/receive-payment']);
     }, 10);
   }
 
   receiveAndClose(){
     if(this.receivedAmount==this.total){
       console.log("Received");
-      this.closeModal();
+      this.router.navigate(['/']);
     } else {
       alert("Received amount should equal to the total");
     }

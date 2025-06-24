@@ -1,31 +1,23 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ModalEnterBillService } from '../../../service/modal-enter-bill.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Account } from '../../../models/account';
 import { BillTransaction } from '../../../models/bill-transaction';
 import { Bill } from '../../../models/bill';
 import { SupplierService } from '../../../service/supplier.service';
-import { Supplier } from '../../../models/supplier';
 import { ChartOfAccountsService } from '../../../service/chart-of-accounts.service';
+import { Router, RouterLink } from '@angular/router';
+import { BillService } from '../../../service/bill.service';
 
 @Component({
   selector: 'app-enter-bill',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './enter-bill.component.html',
   styleUrl: './enter-bill.component.css'
 })
-export class EnterBillComponent implements OnInit, OnDestroy {
+export class EnterBillComponent implements OnInit {
 
-  public isEnterBillsOpen: boolean = true;
-  public isAddSupplierOpen: boolean = true;
-
-
-  private subscription!: Subscription;
   private creditPeriod: number = 14;
-
-  private http = inject(HttpClient);
 
   public subTotal: number = 0;
   public total: number = 0;
@@ -43,18 +35,12 @@ export class EnterBillComponent implements OnInit, OnDestroy {
 
   modifiedAccountList:String[] = [];
   
-  constructor(private modalService: ModalEnterBillService, private httpClient: HttpClient, private supplierService: SupplierService, private coaService: ChartOfAccountsService) {}
+  constructor(private readonly service: BillService, private readonly supplierService: SupplierService, private readonly coaService: ChartOfAccountsService, private readonly router: Router) {}
 
   ngOnInit(): void {
-    this.subscription = this.modalService.isEnterBillsOpen.subscribe(
-      (isEnterBillsOpen: boolean) => {
-        this.isEnterBillsOpen = isEnterBillsOpen;
-      } 
-    );
-
     const today = new Date();
     const due = new Date();
-    due.setDate(today.getDate() + this.creditPeriod); // Example: 30 days from today
+    due.setDate(today.getDate() + this.creditPeriod);
 
     this.invoiceDate = today.toISOString().split('T')[0];
     this.dueDate = due.toISOString().split('T')[0];
@@ -65,22 +51,6 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       this.supplierService.supplierList = suppliers;
       this.supplierList = suppliers.map(s => s.name);
     })
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  closeModal(): void {
-    this.isEnterBillsOpen = false;
-    this.subTotal = 0;
-    this.discount = 0;
-    this.tax = 0;
-    this.total = 0; 
-    this.supplier = '';
-    this.invoice = '';
-
-    this.supplierList = this.supplierService.supplierList.map(s=>s.name);
   }
 
   addRow(event: any): void{
@@ -122,9 +92,7 @@ export class EnterBillComponent implements OnInit, OnDestroy {
     const tbody = currentRow.parentElement;
     
     const tableChildElementCount = tbody.children.length;
-    console.log(tableChildElementCount);
     
-    // console.log(tbody.children.length);
     if (tableChildElementCount==2) {
         Array.from(currentRow.querySelectorAll('input')).forEach(input => {
         (input as HTMLInputElement).value = '';
@@ -133,7 +101,6 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       currentRow.classList.add('remove');
       tbody.removeChild(tbody.querySelector('.remove'));
     }
-
     this.recalculateTotals();
     
   }
@@ -222,35 +189,30 @@ export class EnterBillComponent implements OnInit, OnDestroy {
       billTransactions: transactions
     };
 
-    this.httpClient.post<Bill>('http://localhost:8080/bill/add', bill)
+    this.service.addBill(bill)
       .subscribe({
         next: created => {
-          this.closeModal();
+          this.router.navigate(['/']);
         },
         error: err => {
           console.error('Error creating bill', err);
           alert('Failed to save bill');
         }
       });
-    
-
   }
 
   saveAndNew(): void {
     this.saveAndClose();
-    this.modalService.isEnterBillsOpen.emit(true);
-    // setTimeout(()=>{
-    //   this.isEnterBillsOpen = true;
-    // }, 10);
+    setTimeout(()=>{
+      this.router.navigate(['suppliers/enter-bill']);
+    }, 200);
   }
 
   loadChartOfAccounts(): void {
-
     this.coaService.getAccounts().forEach(row=>{
       row.forEach(item=>{
         this.modifiedAccountList.push(item.code + " " + item.name)
       })
-      
     })
   }
   
@@ -262,6 +224,6 @@ export class EnterBillComponent implements OnInit, OnDestroy {
 
   openAddSupplierModal(): void {
     this.supplierService.supplierName = this.supplier;
-    this.supplierService.isAddSupplierOpen.emit(true);
+    this.router.navigate(['suppliers']);
   }
 }
