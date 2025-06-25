@@ -40,58 +40,62 @@
           @for (row of revenueList; track $index) {
             <tr>
               <td>{{row.accName}}</td>
-              <td>{{-row.amount}}</td>
+              <td>{{(-row.amount).toLocaleString('en-US')}}</td>
             </tr>        
           }
           @if (revenueList.length>0) {
             <tr>
               <td ></td>
-              <td class="h6"><hr>{{revenue}}<hr></td>
+              <td class="h6"><hr>{{(-revenue).toLocaleString('en-US')}}<hr></td>
             </tr>
           }
 
           @for (row of otherRevenueList; track $index) {
             <tr>
               <td>{{row.accName}}</td>
-              <td>{{-row.amount}}</td>
+              <td>{{(-row.amount).toLocaleString('en-US')}}</td>
             </tr>   
           }
           @if (otherRevenueList.length > 0) {
             <tr>
               <td ></td>
-              <td class="h6"><hr>{{otherRevenue}}<hr></td>
+              <td class="h6"><hr>{{(-otherRevenue).toLocaleString('en-US')}}<hr></td>
             </tr>
           }
 
           @for (row of expenseList; track $index) {
             <tr>
               <td>{{row.accName}}</td>
-              <td>{{-row.amount}}</td>
+              <td>{{row.amount.toLocaleString('en-US')}}</td>
             </tr>   
           }
           @if (expenseList.length > 0) {
             <tr>
               <td ></td>
-              <td class="h6"><hr>{{expense}}<hr></td>
+              <td class="h6"><hr>{{expense.toLocaleString('en-US')}}<hr></td>
             </tr>
           }
 
           @for (row of otherExpenseList; track $index) {
             <tr>
               <td>{{row.accName}}</td>
-              <td>{{-row.amount}}</td>
+              <td>{{(-row.amount).toLocaleString('en-US')}}</td>
             </tr>   
           }
           @if (otherExpenseList.length > 0) {
             <tr>
               <td ></td>
-              <td class="h6"><hr>{{otherExpense}}<hr></td>
+              <td class="h6"><hr>{{otherExpense.toLocaleString('en-US')}}<hr></td>
             </tr>
           }
           @if (revenueList.length > 0 || otherRevenueList.length > 0 || expenseList.length > 0|| otherExpenseList.length > 0) {
             <tr>
-              <td class="h5">Net Profit</td>
-              <td class="h5">{{-netProfit}}</td>
+              @if (netProfit<0) {
+                <td class="h5">Net Profit</td>
+              } @else {
+                <td class="h5">Net Loss</td>
+              }
+              <td class="h5">{{(-netProfit).toLocaleString('en-US')}}</td>
             </tr>
           } @else {
             <td class="uw-text-primary">No records to show</td>

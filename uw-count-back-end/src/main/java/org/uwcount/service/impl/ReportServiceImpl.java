@@ -33,15 +33,15 @@ public class ReportServiceImpl implements ReportService {
         for (AccountTransactionSummary account : retrievedAccountTotalAmounts) {
             AccountEntity accountEntity = accRepo.findByAccountCode(account.getAccountId());
             PLReportLine plReportLine = new PLReportLine();
-            plReportLine.setAccName(accountEntity.getName());
-            plReportLine.setAccountType(accountEntity.getAccountType().getName());
-            plReportLine.setAmount(account.getTotalAmount());
-            if (accountEntity.getAccountType().getId() >=8 && accountEntity.getAccountType().getId() <=11) {
-                netProfit += account.getTotalAmount();
-                plReportLineCreated.add(plReportLine);
+            if (accountEntity != null) {
+                plReportLine.setAccName(accountEntity.getName());
+                plReportLine.setAccountType(accountEntity.getAccountType().getName());
+                plReportLine.setAmount(account.getTotalAmount());
+                if (accountEntity.getAccountType().getId() >=8 && accountEntity.getAccountType().getId() <=11) {
+                    netProfit += account.getTotalAmount();
+                    plReportLineCreated.add(plReportLine);
+                }
             }
-//            System.out.println("accountEntity.name: 26: " + accountEntity.getName() + accountEntity.getAccountType().getName());
-
         }
 
         PLReportLine netMovement = new PLReportLine();
@@ -60,13 +60,17 @@ public class ReportServiceImpl implements ReportService {
         Double profit = 0.0;
         for (AccountTransactionSummary account: retrievedAccountTotalAmounts) {
             AccountEntity accountEntity = accRepo.findByAccountCode(account.getAccountId());
-            BSReportLine bsReportLine = new BSReportLine(accountEntity.getName(), accountEntity.getAccountType().getName(), account.getTotalAmount());
-            if (accountEntity.getAccountType().getId()<=7) {
-                bsReportLinesCreated.add(bsReportLine);
-            } else {
-                profit+=bsReportLine.getAmount();
+            if (accountEntity !=null){
+                BSReportLine bsReportLine = new BSReportLine(accountEntity.getName(), accountEntity.getAccountType().getName(), account.getTotalAmount());
+
+                if (accountEntity.getAccountType().getId()<=7) {
+                    bsReportLinesCreated.add(bsReportLine);
+                } else {
+                    profit+=bsReportLine.getAmount();
+                }
             }
         }
+
         bsReportLinesCreated.add(new BSReportLine("Retained Earnings", "Equity", profit));
 
         return bsReportLinesCreated;
