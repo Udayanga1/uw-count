@@ -18,4 +18,8 @@ export class InvoiceService {
       return this.http.post<Invoice>(`${this.baseUrl}/add`, data);
   }
 
+  getInvoices(): Observable<Invoice[]> {
+    return this.http.get<any>(`${this.baseUrl}/get-all`);
+  }
+
 }
